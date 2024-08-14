@@ -1,3 +1,14 @@
+# Working folder
+working
+data
+test
+
+# Config File
+config.yaml
+
+# Binaries
+bin
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

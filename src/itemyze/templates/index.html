@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Index{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% from "form_helpers.html" import render_field %}
+
+  <form method="post">
+    <dl>
+      <div class="form-group">
+        {{ render_field(form.group) }}
+      </div>
+      <div class="form-group">
+        {{ render_field(form.receipt) }}
+      </div>
+    </dl>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+  <!--
+  <form method="post">
+    <select class="form-select-sm" aria-label="Group selector">
+      <option selected>Select a group for this expense</option>
+      {% for group in g.groups %}
+        <option value="{{ group['id'] }}">{{ group["name"] }}</option>
+      {% endfor %}
+    </select>
+    <div class="mb-3">
+      <label for="formFileSm" class="form-label">Upload receipt</label>
+      <input class="form-control form-control-sm" id="formFileSm" type="file">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  -->
+{% endblock %}
