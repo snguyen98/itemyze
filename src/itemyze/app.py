@@ -1,7 +1,7 @@
 from flask import Flask, g, request, render_template
 import yaml
 
-from tools.sw import get_sw_groups
+from itemyze.tools.splitwise import get_sw_groups
 from forms.upload_receipt_form import UploadReceipt
 
 from config import Config
