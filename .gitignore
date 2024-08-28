@@ -15,8 +15,7 @@ bin
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py__pycache__/
-[cprod
+*.py[cod]
 *$py.class
 
 # C extensions
