@@ -1,5 +1,5 @@
-# Django
-settings.py
+# API settings
+src/itemyze/itemyze/settings/api.py
 
 # Working folder
 working
