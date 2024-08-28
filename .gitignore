@@ -1,3 +1,6 @@
+# Node
+node_modules/
+
 # Django settings
 src/itemyze/itemyze/settings/api.py
 src/itemyze/itemyze/settings/prod.py
