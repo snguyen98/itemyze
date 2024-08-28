@@ -1,5 +1,6 @@
-# API settings
+# Django settings
 src/itemyze/itemyze/settings/api.py
+src/itemyze/itemyze/settings/prod.py
 
 # Working folder
 working
@@ -14,7 +15,8 @@ bin
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
+*.py__pycache__/
+[cprod
 *$py.class
 
 # C extensions
