@@ -1,0 +1,21 @@
+#upload-form {
+    display: flex;
+    flex-direction: column;
+
+    .form-item {
+        margin-bottom: 10px;
+    }
+}
+
+.required::after { 
+    content: "*";
+    color: red;
+}
+
+#validation-msg {
+    color: red;
+}
+
+.total-text {
+    font-weight: bold;
+}
