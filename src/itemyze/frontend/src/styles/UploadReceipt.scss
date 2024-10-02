@@ -1,6 +1,8 @@
 #upload-form {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: left;
 
     .form-item {
         margin-bottom: 10px;

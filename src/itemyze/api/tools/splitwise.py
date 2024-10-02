@@ -26,3 +26,28 @@ def get_sw_groups():
     groups = json.loads(res.content)["groups"]
 
     return groups
+
+
+def get_sw_group_members(id: int):
+    session = get_oauth_session()
+
+    res = session.get(f'https://secure.splitwise.com/api/v3.0/get_group/{id}')
+    members = json.loads(res.content)["group"]["members"]
+
+    return members
+
+
+def get_sw_currencies():
+    session = get_oauth_session()
+
+    res = session.get(f'https://secure.splitwise.com/api/v3.0/get_currencies')
+    currencies = json.loads(res.content)
+
+    return currencies
+
+
+
+def upload_expense():
+    session = get_oauth_session()
+
+

@@ -1,11 +1,36 @@
 $fonts: "Trebuchet MS", Arial, Helvetica, sans-serif;
 
 .content {
-  width: 30%;
-  margin-left: auto;
-  margin-right: auto;
+  width: 50%;
+  margin: auto;
 }
 
 body {
   font-family: $fonts;
+}
+
+.btn-m {
+  background-color: #4c79f5;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  border-radius: 3px;
+}
+
+.btn-sm {
+  background-color: #4c79f5;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 9px;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
 }

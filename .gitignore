@@ -6,7 +6,7 @@ src/itemyze/itemyze/settings/api.py
 src/itemyze/itemyze/settings/prod.py
 
 # Django migrations
-migrations/
+migrations
 
 # Working folder
 working
