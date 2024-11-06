@@ -9,10 +9,14 @@ import Dict from '../interfaces/Dict';
 
 import '../styles/UploadReceipt.scss';
 import ItemList from '../components/ItemList';
+import Item from '../interfaces/Item';
+import getExpenseInfo from '../utils/getExpenseInfo';
 
 function UploadReceipt() {
   const [groups, setGroups] = useState<Dict[]>([]);
   const [expenseId, setExpenseId] = useState<number>();
+  const [items, setItems] = useState<Item[]>([]);
+  const [total, setTotal] = useState<number>();
   const [currency, setCurrency] = useState<string>("");
   const [currencies, setCurrencies] = useState<Dict[]>([]);
   const [receipt, setReceipt] = useState<File>();
@@ -26,6 +30,16 @@ function UploadReceipt() {
       .get('/api/get_currencies')
       .then(res => setCurrencies(res.data.currencies));
   }, []);
+
+  useEffect(() => {
+    if (expenseId !== undefined) {
+        getExpenseInfo(expenseId)
+            .then(res => {
+                setItems(res.data.items);
+                setTotal(res.data.total);
+            });
+    }
+}, [expenseId]);
 
   useEffect(() => {
     displayPreview()
@@ -43,6 +57,11 @@ function UploadReceipt() {
     if (expenseId !== undefined) {
       setGroupId(expenseId, data.group);
 
+      navigate({
+        pathname: "itemise",
+        search: `?expenseId=${expenseId}`
+      });
+      /*
       navigate(
         '/itemise', {
           state: {
@@ -50,6 +69,7 @@ function UploadReceipt() {
           }
         }
       );
+      */
     }
   };
   const displayPreview = async() => {
@@ -106,10 +126,10 @@ function UploadReceipt() {
         </span>}
         <button className="form-item btn-m">Submit</button>
       </form>
-      { expenseId !== undefined && 
+      { items.length > 0 && total !== undefined && 
         <div id="receipt-items">
           <h3>Preview</h3>
-          <ItemList expenseId={expenseId} itemise={false} />
+            <ItemList items={items} total={total} currency={currency} users={[]} />
         </div>
       }
     </div>

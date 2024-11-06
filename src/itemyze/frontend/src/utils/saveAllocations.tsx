@@ -1,7 +1,7 @@
 import axios from "axios";
 import Dict from "../interfaces/Dict";
 
-async function saveAllocation(expenseId: number, allocations: Dict[]) {
+async function saveAllocations(expenseId: number, allocations: Dict[]) {
     /*
     const csrftoken = Cookies.get('csrftoken');
     axios.defaults.xsrfHeaderName = 'x-csrftoken';
@@ -34,4 +34,4 @@ async function saveAllocation(expenseId: number, allocations: Dict[]) {
     }
 }
 
-export default saveAllocation;
+export default saveAllocations;

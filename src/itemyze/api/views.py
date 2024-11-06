@@ -64,7 +64,8 @@ def get_group_members(request):
 
     members = [{ "id": member["id"], 
                  "fname": member["first_name"], 
-                 "lname": str(member["last_name"] or "")} 
+                 "lname": str(member["last_name"] or ""),
+                 "avatar": member["picture"]["small"]}
               for member in get_sw_group_members(group_id)]
     
     return JsonResponse({ "members": members })

@@ -1,35 +1,12 @@
 import { useEffect, useState } from "react";
 
-import getExpenseInfo from "../utils/getExpenseInfo";
-import getGroupMembers from "../utils/getGroupMembers";
 import Item from "../interfaces/Item";
 import Allocation from "../interfaces/Allocation";
 import User from "../interfaces/User";
-import saveAllocation from "../utils/saveAllocation";
-import Dict from "../interfaces/Dict";
 
-function ItemList({ expenseId, itemise }: { expenseId: number, itemise: boolean }) {
-    const [items, setItems] = useState<Item[]>([]);
-    const [total, setTotal] = useState<number>();
-    const [currency, setCurrency] = useState<string>("");
-    const [users, setUsers] = useState<User[]>([]);
+function ItemList({ items, users, total, currency }: { items: Item[], users: User[], total: number, currency: string }) {
     const [totals, setTotals] = useState<Allocation>({});
     const [checked, setChecked] = useState<{[itemId: number]: {[userId: number]: boolean}}>({});
-    const [saved, setSaved] = useState<boolean>(true);
-
-    useEffect(() => {
-        getExpenseInfo(expenseId)
-            .then(res => {
-                setItems(res.data.items);
-                setTotal(res.data.total);
-                setCurrency(res.data.currency);
-                
-                return getGroupMembers(res.data.groupId);
-            })
-            .then(res => {
-                setUsers(res.data.members);
-            });
-    }, [expenseId]);
 
     useEffect(() => {
         if (items.length > 0 && users.length > 0) {
@@ -81,13 +58,6 @@ function ItemList({ expenseId, itemise }: { expenseId: number, itemise: boolean 
     // eslint-disable-next-line
     }, [checked]);
 
-    const toggleCheck = (itemId: number, userId: number, isChecked: boolean) => {
-        setChecked(prevState => {
-          const newState = { ...prevState };
-          newState[itemId][userId] = isChecked;
-          return newState;
-        });
-    };
 
     function initialiseChecked() {
         let newChecked = items.reduce((itemArr, item) => ({
@@ -101,10 +71,12 @@ function ItemList({ expenseId, itemise }: { expenseId: number, itemise: boolean 
         setTotals(initTotals);
     }
 
+    /*
     function saveAllocs() {
         const allocs = users.map(user => ({ "user": String(user.id), "amount": (totals[user.id] / 100).toFixed(2) })) as Dict[];
         saveAllocation(expenseId, allocs);
     }
+    */
 
     const checkRow = (itemId: number, val: boolean) => {
         let newChecked = { ...checked, [itemId]: users.reduce((userArr, user) => ({ ...userArr, [user.id]: val }), {}) }
@@ -133,44 +105,13 @@ function ItemList({ expenseId, itemise }: { expenseId: number, itemise: boolean 
                     <tr>
                         <th rowSpan={2} scope="col">Item Name</th>
                         <th rowSpan={2} scope="col">Cost</th>
-                        { itemise && users.length > 0 && 
-                            <th colSpan={users.length} scope="colgroup">
-                                Allocations
-                            </th>
-                        }
                     </tr>
-                    { itemise && users.length > 0 && 
-                        <tr>
-                            { users.map((user, index) => (
-                                <th key={index} scope="col">
-                                    {`${user.fname} ${user.lname}`}
-                                </th>
-                            )) }
-                        </tr>
-                    }
                 </thead>
                 <tbody>
                     { items.map((item, row) => (
                         <tr key={row}>
                             <td>{ item.name }</td>
                             <td>{ currency + item.cost }</td>
-                            { itemise && users.length > 0 && (
-                                users.map((user, col) => { return (
-                                    <td key={col}>
-                                        <input 
-                                            type="checkbox" 
-                                            onChange={(e) => toggleCheck(item.id, user.id, e.target.checked)}
-                                            checked={checked[item.id] !== undefined && checked[item.id][user.id]}
-                                        />
-                                    </td>
-                                );}))
-                            }
-                            { itemise && users.length > 0 && 
-                                ( isAllChecked(item.id)
-                                    ? <td><button className="btn-sm" onClick={() => checkRow(item.id, false)}>Uncheck All</button></td>
-                                    : <td><button className="btn-sm" onClick={() => checkRow(item.id, true)}>Check All</button></td>
-                                )
-                            }
                         </tr>
                     ))}
                     <tr>
@@ -179,25 +120,12 @@ function ItemList({ expenseId, itemise }: { expenseId: number, itemise: boolean 
                         </td>
                         <td>
                             <span className="total-text">
-                                { total !== undefined && currency + total }
+                                { total !== undefined && currency + Number(total).toFixed(2) }
                             </span>
                         </td>
-                        { itemise && users.map((user) => (
-                            <td key={"total-" + user.id}>
-                                <span className="total-text">
-                                    { totals[user.id] !== undefined && currency + (totals[user.id] / 100).toFixed(2) }
-                                </span>
-                            </td>
-                        ))}
                     </tr>
                 </tbody>
             </table>
-            { itemise && users.length > 0 &&
-                <p>{saved ? "Saved" : "Saving"}</p>
-            }
-            { itemise &&
-                <button className="btn-m" onClick={() => saveAllocs()}>Save Expense</button>
-            }
         </div>
     );
 }
