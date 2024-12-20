@@ -36,6 +36,7 @@ const ItemiseExpense = () => {
     const [selected, setSelected] = useState<number | false>(false);
     const [showTotals, setShowTotals] = useState<boolean>(false);
     const [showError, setShowError] = useState<boolean>(false);
+    const [errorMsg, setErrorMsg] = useState<string>("");
 
     useEffect(() => {
         if (expenseId !== undefined) {
@@ -140,36 +141,45 @@ const ItemiseExpense = () => {
     const saveItemisation = () => {
         if (calcRemaining() == 0) {
             setShowError(false);
-            
+
             const allocations = users.map(user => ({
                 "user": String(user.id),
                 "amount": (totals[user.id] / 100).toFixed(2)
             })) as Dict[];
 
-            saveAllocations(expenseId, allocations);
+            const resPromise = saveAllocations(expenseId, allocations);
+
+            resPromise.then((res) => {
+                if (res.status !== 200) {
+                    console.error(res.data.message);
+                    setErrorMsg("An error occurred when saving. Please try again.")
+                    setShowError(true);
+                }
+            });
         }
         else {
+            setErrorMsg("Please itemise the remaining items");
             setShowError(true);
         }
     }
     
     return (
         <div className="content">
-            <Stack id="header" direction="column" spacing={1}>
+            <Stack id="header" direction="column" spacing={0}>
                 <Paper square={true}>
-                    <Stack className="footer-content" direction="row" spacing={0}>
+                    <Stack className="frame-content" direction="row" spacing={0}>
                         <Typography id="title-text" variant="h4">Itemise</Typography>
                         <Button id="header-submit" variant="text" onClick={saveItemisation}>Save</Button>
                     </Stack>
                 </Paper>
                 { showError && 
-                    <Alert severity="error">Please itemise the remaining items</Alert>
+                    <Alert severity="error">{errorMsg}</Alert>
                 }
             </Stack>
             <Stack id="item-list">
                 { expenseId !== undefined && items.length !== 0 && users.length !== 0 && total !== undefined &&
                     items.map((item) => (
-                        <Accordion className="accordion-item" expanded={selected === item.id} onChange={panelClicked(item.id)}>
+                        <Accordion key={item.id} className="accordion-item" expanded={selected === item.id} onChange={panelClicked(item.id)}>
                             <AccordionSummary
                                 aria-controls={item.id + "-content"}
                                 id={item.id + "-header"}
@@ -177,7 +187,7 @@ const ItemiseExpense = () => {
                                 <Typography>{item.name}</Typography>
                                 <Stack className="avatar-display" direction="row">
                                     { users.filter(user => checked[item.id][user.id]).map(user => (
-                                        <Avatar alt={user.fname} src={user.avatar} sx={{ width: 24, height: 24, flexStrink: 0 }}/>
+                                        <Avatar className="avatar-img" alt={user.fname} src={user.avatar}/>
                                     ))}
                                 </Stack>
                             </AccordionSummary>
@@ -194,10 +204,10 @@ const ItemiseExpense = () => {
                 }
             </Stack>
             <Paper id="footer" sx={{ bottom: 0, left: 0, right: 0, bgcolor: 'lightgrey' }} square={true}>
-                <Stack className="footer-content" spacing={1} direction="row">
-                    <Stack className="footer-content" direction="column">
-                        <Typography variant="body1">Total: <span>{currency + Number(total).toFixed(2)}</span></Typography>
-                        <Typography variant="body1">Remaining: <span>{currency + Number(calcRemaining()).toFixed(2)}</span></Typography>
+                <Stack className="frame-content" spacing={1} direction="row">
+                    <Stack className="frame-content" direction="column">
+                        <Typography variant="body1">Total: <span>{`${Number(total).toFixed(2)} ${currency}`}</span></Typography>
+                        <Typography variant="body1">Remaining: <span>{`${Number(calcRemaining()).toFixed(2)} ${currency}`}</span></Typography>
                     </Stack>
                     <InfoOutlinedIcon onClick={showTotalPanel} />
                 </Stack>
@@ -207,8 +217,8 @@ const ItemiseExpense = () => {
                     <Stack className="card-content" direction="column" spacing={1}>
                         <Typography variant="h5">Totals</Typography>
                         { users.map((user) => (
-                            <Typography variant="body1">
-                                {`${user.fname} ${user.lname}: ${currency}${(totals[user.id] / 100).toFixed(2)}`}
+                            <Typography key={user.id} variant="body1">
+                                {`${user.fname} ${user.lname}: ${(totals[user.id] / 100).toFixed(2)} ${currency}`}
                             </Typography>
                         ))}
                     </Stack>

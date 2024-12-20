@@ -1,7 +1,7 @@
 import axios from "axios";
 import Dict from "../interfaces/Dict";
 
-async function saveAllocations(expenseId: number, allocations: Dict[]) {
+async function createExpense(name: string, group: number, currency: string) {
     /*
     const csrftoken = Cookies.get('csrftoken');
     axios.defaults.xsrfHeaderName = 'x-csrftoken';
@@ -13,10 +13,11 @@ async function saveAllocations(expenseId: number, allocations: Dict[]) {
     try {
         const res = await axios({
         method: 'post', 
-        url: 'http://127.0.0.1:8000/api/save_allocations', 
+        url: 'http://127.0.0.1:8000/api/create_expense', 
         data: {
-            expenseId: expenseId,
-            allocations: allocations
+            name: name,
+            group: group,
+            currency: currency
         },
         headers: {
             'Content-Type': 'application/json',
@@ -34,4 +35,4 @@ async function saveAllocations(expenseId: number, allocations: Dict[]) {
     }
 }
 
-export default saveAllocations;
+export default createExpense;

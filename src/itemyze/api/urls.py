@@ -10,4 +10,7 @@ urlpatterns = [
     path("get_expenses", views.get_expenses, name="get_expenses"),
     path("set_group", views.set_group, name="set_group"),
     path("save_allocations", views.save_allocations, name="save_allocations"),
+    path("create_expense", views.create_expense, name="create_expense"),
+    path("get_currency_unit", views.get_currency_unit, name="get_currency_unit"),
+    path("get_group_name", views.get_group_name, name="get_group_name"),
 ]

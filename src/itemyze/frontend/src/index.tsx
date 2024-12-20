@@ -6,9 +6,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import Home from './pages/Home';
 import CreateExpense from './pages/CreateExpense';
-import UploadReceipt from './pages/UploadReceipt';
 import ItemiseExpense from './pages/ItemiseExpense';
 import NotFound from './pages/NotFound';
+import ViewExpense from './pages/ViewExpense';
 
 //import './styles/index.scss';
 
@@ -19,7 +19,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/">
           <Route path="create" element={<CreateExpense />} />
-          <Route path="upload" element={<UploadReceipt />} />
+          <Route path="view" element={<ViewExpense />} />
           <Route path="itemise" element={<ItemiseExpense />} />
         </Route>
         <Route path="*" element={<NotFound />} />

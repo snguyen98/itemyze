@@ -1,28 +1,35 @@
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class Expense(models.Model):
-    class Status(models.IntegerChoices):
-        WAITING = 1, _("Waiting")
-        PROCESSED = 2, _("Processed")
-        DELETED = 3, _("Deleted")
-        ERROR = 4, _("Error")
+    class ReceiptStatus(models.IntegerChoices):
+        PENDING = 1, _("Pending")
+        ERROR = 2, _("Error")
+        PROCESSED = 3, _("Processed")
+        ITEMISED = 4, _("Itemised")
 
-    name = models.CharField(max_length=255, blank=True)
+    class SyncStatus(models.IntegerChoices):
+        PENDING = 1, _("Pending")
+        ERROR = 2, _("Error")
+        SYNCED = 3, _("Synced")
+        DELETED = 4, _("Deleted")
+
+    name = models.CharField(max_length=255, blank=False)
     total = models.DecimalField(max_digits=11, decimal_places=2, null=True)
-    currency = models.CharField(max_length=1, blank=True)
+    currency = models.CharField(max_length=1)
     receipt_status = models.IntegerField(
-        choices=Status.choices,
-        default=Status.WAITING,
+        choices=ReceiptStatus.choices,
+        default=ReceiptStatus.PENDING,
     )
-    upload_status = models.IntegerField(
-        choices=Status.choices,
-        default=Status.WAITING,
+    sync_status = models.IntegerField(
+        choices=SyncStatus.choices,
+        default=SyncStatus.PENDING,
     )
-    sw_expense_id = models.IntegerField(null=True)
-    sw_user_id = models.IntegerField(null=True)
-    sw_group_id = models.IntegerField(null=True)
+    splitwise_id = models.IntegerField(null=True)
+    splitwise_group = models.IntegerField(null=False)
+    #created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 
 class Item(models.Model):

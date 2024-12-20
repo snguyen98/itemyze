@@ -46,8 +46,19 @@ def get_sw_currencies():
     return currencies
 
 
-
 def upload_expense():
     session = get_oauth_session()
 
 
+def get_sw_currency_unit(currency_code: str):
+    print(currency_code)
+    return next((curr["unit"] for curr in get_sw_currencies()["currencies"] if curr["currency_code"] == currency_code), "")
+
+
+def get_sw_group_name(id: int):
+    session = get_oauth_session()
+
+    res = session.get(f'https://secure.splitwise.com/api/v3.0/get_group/{id}')
+    group = json.loads(res.content)["group"]
+
+    return group["name"]

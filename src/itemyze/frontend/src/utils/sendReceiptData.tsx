@@ -1,7 +1,8 @@
 import axios from "axios";
 
-async function sendReceiptData(file: File, currency: string) {
-    const formData = new FormData();
+async function sendReceiptData(expenseId: Number, file: File, currency: string) {
+    const formData = new FormData(); 
+    formData.append("expense_id", String(expenseId));
     formData.append("receipt", file);
     formData.append("currency", currency);
     /*
@@ -13,7 +14,7 @@ async function sendReceiptData(file: File, currency: string) {
     console.log("Token: " + csrftoken);
     */
     try {
-        let res = await axios({
+        const res = await axios({
         method: 'post', 
         url: 'http://127.0.0.1:8000/api/process_receipt', 
         data: formData,
@@ -26,10 +27,10 @@ async function sendReceiptData(file: File, currency: string) {
         //withCredentials: true
         })
 
-        return res.data;
+        return res;
     }
-    catch (err) {
-        console.error(err);
+    catch (err: any) {
+        return err.response;
     }
 }
 

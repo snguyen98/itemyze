@@ -8,7 +8,7 @@ function AllocationList({item, users, selectedUsers, onSelect}: {item: Item, use
     return (
         <Stack>
             { users.map(user => (
-                <AllocationRow isActive={selectedUsers[user.id]} user={user} onSelect={() => onSelect(item.id, user.id)} />
+                <AllocationRow key={user.id} isActive={selectedUsers[user.id]} user={user} onSelect={() => onSelect(item.id, user.id)} />
             ))}
         </Stack>
     );

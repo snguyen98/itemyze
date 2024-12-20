@@ -1,11 +1,11 @@
 import axios from "axios";
 
- async function getExpenseInfo(expenseId: number) {
+ async function getCurrencyUnit(currencyCode: string) {
     try {
         const res = await axios
-            .get('/api/get_expense', {
+            .get('/api/get_currency_unit', {
                 params: {
-                    expense_id: expenseId
+                    currency_code: currencyCode
                 }
             });
 
@@ -16,4 +16,4 @@ import axios from "axios";
     }
 }
 
-export default getExpenseInfo;
+export default getCurrencyUnit;

@@ -1,4 +1,4 @@
-.footer-content {
+.frame-content {
     align-items: center;
     justify-content: center;
     margin-top: 3px;
@@ -39,4 +39,10 @@
     position: sticky;
     bottom: 0;
     z-index: 5;
+}
+
+div.avatar-img {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
 }

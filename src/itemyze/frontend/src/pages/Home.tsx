@@ -1,42 +1,84 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
-import Dict from "../interfaces/Dict";
+import { Table, TableCell, TableContainer, TableHead, TableRow, Paper, TableBody, List, ListItem, ListItemText, ListItemButton, Divider, IconButton, Stack, Typography } from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
+import '../styles/Home.scss';
+import getExpenses from '../utils/getExpenses';
+import Expense from '../interfaces/Expense';
 
 function Home() {
-    const [expenses, setExpenses] = useState<Dict[]>([]); 
+    const navigate = useNavigate();
+
+    const [expenses, setExpenses] = useState<Expense[]>([]); 
 
     useEffect(() => {
-        axios
-            .get('/api/get_expenses')
-            .then(res => setExpenses(res.data.expenses));
+        getExpenses()
+            .then(res => {
+                setExpenses(res);
+            })
+        /*
+        setExpenses([
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
+            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" }
+        ])
+        */
     }, []);
+
+    const clickItem = (expenseId: number) => {
+        if (expenseId !== undefined) {
+            navigate({
+                pathname: "/view",
+                search: `?expenseId=${expenseId}`
+            });
+        }
+    }
+
+    const clickCreate = () => {
+        navigate({
+            pathname: "/create"
+        });
+    }
 
     return (
         <div className="content">
-            { expenses.length !== 0 && (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Total</th>
-                            <th>Group ID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { 
-                            expenses.map((expense, index) => (
-                                <tr>
-                                    <td key={`name-${index}`}>{ expense.name }</td>
-                                    <td key={`total-${index}`}>{ expense.currency + expense.total }</td>
-                                    <td key={`groupId-${index}`}>{ expense.groupId }</td>
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-                
-            )}
+            <Paper id="header" square={true}>
+                <Typography className="frame-content" id="title-text" variant="h4">Expense List</Typography>
+            </Paper>
+            <List>
+                <Divider variant="inset" component="li" />
+                { 
+                    expenses.map((expense, index) => (
+                        <div>
+                            <ListItemButton onClick={() => clickItem(expense.id)}>
+                                <ListItemText
+                                    primary={expense.name}
+                                    secondary={expense.splitwiseGroup} />
+                                <ListItemText primary={expense.currency} />
+                                <ListItemText primary={`Receipt ${expense.receiptStatus}`} />
+                                <ListItemText primary={`Sync ${expense.syncStatus}`} />
+                                <ChevronRightIcon />
+                            </ListItemButton>
+                            <Divider />
+                        </div>
+                    ))
+                }
+            </List>
+            <IconButton id="create-icon" size="large" onClick={clickCreate}>
+                <AddCircleIcon fontSize="inherit" />
+            </IconButton>
         </div>
     );
 };

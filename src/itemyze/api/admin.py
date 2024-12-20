@@ -9,10 +9,8 @@ class ExpenseAdmin(admin.ModelAdmin):
         'currency',
         'total',
         'receipt_status',
-        'upload_status',
-        'sw_expense_id',
-        'sw_user_id',
-        'sw_group_id',
+        'sync_status',
+        'splitwise_id'
     )
 
 class ItemAdmin(admin.ModelAdmin):
