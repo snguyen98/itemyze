@@ -59,7 +59,7 @@ function Home() {
             </Paper>
             <List>
                 <Divider variant="inset" component="li" />
-                { 
+                { expenses !== undefined && expenses.length > 0 && 
                     expenses.map((expense, index) => (
                         <div>
                             <ListItemButton onClick={() => clickItem(expense.id)}>
