@@ -18,7 +18,6 @@ const ViewExpense = () => {
     const navigate = useNavigate();
     const expenseId = Number(new URLSearchParams(search).get("expenseId"));
     const [expense, setExpense] = useState<Expense>();
-    const [group, setGroup] = useState<string>("");
     const [currency, setCurrency] = useState<string>("");
 
     useEffect(() => {
@@ -64,7 +63,7 @@ const ViewExpense = () => {
                     <Divider />
                     <Typography variant="h6">Splitwise</Typography>
                     <Typography>Expense: {expense.splitwiseId}</Typography>
-                    <Typography>Group: {group}</Typography>
+                    <Typography>Group: {expense.splitwiseGroup}</Typography>
                     <Divider />
                     <Typography variant="h6">Items</Typography>
                     { expense.items !== undefined && expense.items.length > 0 ? (
