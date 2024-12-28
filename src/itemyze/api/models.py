@@ -29,6 +29,8 @@ class Expense(models.Model):
     )
     splitwise_id = models.IntegerField(null=True)
     splitwise_group = models.IntegerField(null=False)
+    created_on = models.DateField(auto_now_add=True)
+    last_modified = models.DateField(auto_now=True)
     #created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 
@@ -36,6 +38,8 @@ class Item(models.Model):
     name = models.CharField(max_length=255)
     cost = models.DecimalField(max_digits=11, decimal_places=2, null=True)
     expense = models.ForeignKey(Expense, on_delete=models.CASCADE)
+    created_on = models.DateField(auto_now_add=True)
+    last_modified = models.DateField(auto_now=True)
 
     def clean(self):
         total = getattr(self.expense, "total")
@@ -50,6 +54,8 @@ class Allocation(models.Model):
     sw_user_id = models.IntegerField()
     amount = models.DecimalField(max_digits=11, decimal_places=2, null=True)
     expense = models.ForeignKey(Expense, on_delete=models.CASCADE)
+    created_on = models.DateField(auto_now_add=True)
+    last_modified = models.DateField(auto_now=True)
 
     def clean(self):
         expense_total = getattr(self.expense, "total")
