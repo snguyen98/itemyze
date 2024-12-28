@@ -45,10 +45,6 @@ const ItemiseExpense = () => {
                     setItems(res.data.items);
                     setTotal(res.data.total);
                     setCurrency(res.data.currency);
-                    
-                    return getGroupMembers(res.data.groupId);
-                })
-                .then(res => {
                     setUsers(res.data.members);
                 });
         }

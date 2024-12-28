@@ -9,6 +9,7 @@ interface Expense {
     syncStatus: string,
     splitwiseId: number,
     splitwiseGroup: string,
+    members: User[],
     createdBy: User,
     items: Item[]
 }

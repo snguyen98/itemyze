@@ -106,21 +106,20 @@ def get_expense(request):
         "sync_status": expense.get_sync_status_display(),
         "splitwise_id": expense.splitwise_id,
         "splitwise_group": get_sw_group_name(id=expense.splitwise_group),
+        "members": get_group_members(id=expense.splitwise_group),
         #"created_by": expense.created_by,
         "items": list(items.values()),
     })
 
 
-def get_group_members(request):
-    group_id = request.GET.get("group_id")
-
+def get_group_members(id: int):
     members = [{ "id": member["id"], 
                  "fname": member["first_name"], 
                  "lname": str(member["last_name"] or ""),
                  "avatar": member["picture"]["small"]}
-              for member in get_sw_group_members(group_id)]
+              for member in get_sw_group_members(id)]
     
-    return JsonResponse({ "members": members })
+    return members
 
 
 def get_expenses(_):
