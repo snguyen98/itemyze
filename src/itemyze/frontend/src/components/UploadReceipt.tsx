@@ -2,13 +2,7 @@ import sendReceiptData from '../utils/sendReceiptData';
 
 import '../styles/UploadReceipt.scss';
 
-function UploadReceipt({expenseId, currency}: {expenseId: Number, currency: string}) {
-  const receiptUploaded = (receipt: File) => {
-    if (receipt !== undefined && currency !== null && currency !== "") {
-      sendReceiptData(expenseId, receipt, currency);
-    }
-  }
-
+function UploadReceipt({onUpload}: {onUpload: (receipt: File) => void}) {
   return (
     <div className="content">
         <input 
@@ -16,7 +10,7 @@ function UploadReceipt({expenseId, currency}: {expenseId: Number, currency: stri
           type="file"
           onChange={ async (e) => {
             if (e.target.files) {
-              receiptUploaded(e.target.files[0]);
+              onUpload(e.target.files[0]);
             }
           }}
         />
