@@ -1,28 +1,40 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 import Item from "../interfaces/Item";
-import Allocation from "../interfaces/Allocation";
-import User from "../interfaces/User";
 
-function ItemList({ items, currency }: { items: Item[],  currency: string }) {
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import EditIcon from '@mui/icons-material/Edit';
+
+function ItemList({ items, currency, onItemSelect }: { items: Item[],  currency: string, onItemSelect: (item: Item) => void }) {
     return (
-        <div id="receipt-items">
-            <table>
-                <thead>
-                    <tr>
-                        <th rowSpan={2} scope="col">Item Name</th>
-                        <th rowSpan={2} scope="col">Cost</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    { items.map((item, row) => (
-                        <tr key={row}>
-                            <td>{ item.name }</td>
-                            <td>{ currency + item.cost }</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+        <div className="content">
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Item Name</TableCell>
+                            <TableCell>Cost</TableCell>
+                            <TableCell />
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        { items.map((item, row) => (
+                            <TableRow key={row} hover onClick={() => onItemSelect(item)}>
+                                <TableCell>{ item.name }</TableCell>
+                                <TableCell>{ currency + item.cost }</TableCell>
+                                <TableCell><EditIcon fontSize="medium" /></TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </div>
     );
 }
