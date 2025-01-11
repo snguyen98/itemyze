@@ -9,6 +9,7 @@ import CreateExpense from './pages/CreateExpense';
 import ItemiseExpense from './pages/ItemiseExpense';
 import NotFound from './pages/NotFound';
 import ViewExpense from './pages/ViewExpense';
+import ViewItems from './pages/ViewItems';
 
 //import './styles/index.scss';
 
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/">
           <Route path="create" element={<CreateExpense />} />
           <Route path="view" element={<ViewExpense />} />
+          <Route path="items" element={<ViewItems />} />
           <Route path="itemise" element={<ItemiseExpense />} />
         </Route>
         <Route path="*" element={<NotFound />} />
