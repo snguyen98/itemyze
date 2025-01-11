@@ -138,6 +138,24 @@ def get_expenses(_):
 def get_currencies(_):
     return JsonResponse(get_sw_currencies())
 
+@csrf_exempt
+def edit_item(request):
+    if request.method == 'POST':
+        item_id = request.POST.get("itemId")
+        name = request.POST.get("name")
+        cost = request.POST.get("cost")
+
+        item_to_edit = Item.objects.get(id=item_id)
+
+        item_to_edit.name = name
+        item_to_edit.cost = cost
+        item_to_edit.save()
+
+        return JsonResponse({ "message": "Success" })
+
+    else:
+        return JsonResponse(status=400, data={ "status": "false", "message": "Request must be POST for this endpoint" })
+    
 
 @csrf_exempt
 def set_group(request):
