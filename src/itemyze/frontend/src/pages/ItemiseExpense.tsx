@@ -147,7 +147,6 @@ const ItemiseExpense = () => {
 
             resPromise.then((res) => {
                 if (res.status !== 200) {
-                    console.error(res.data.message);
                     setErrorMsg("An error occurred when saving. Please try again.")
                     setShowError(true);
                 }
