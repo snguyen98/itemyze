@@ -17,13 +17,6 @@ function ItemList({ items, currency, onItemSelect }: { items: Item[],  currency:
         <div className="content">
             <TableContainer component={Paper}>
                 <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Item Name</TableCell>
-                            <TableCell>Cost</TableCell>
-                            <TableCell />
-                        </TableRow>
-                    </TableHead>
                     <TableBody>
                         { items.map((item, row) => (
                             <TableRow key={row} hover onClick={() => onItemSelect(item)}>
