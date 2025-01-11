@@ -8,21 +8,8 @@ import Chip from "@mui/material/Chip";
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import { Backdrop, CircularProgress, Stack } from "@mui/material";
-import ItemList from "../components/ItemList";
-import UploadReceipt from "../components/UploadReceipt";
+import { Backdrop, CircularProgress } from "@mui/material";
 import { Button } from "@mui/material";
-import getCurrencyUnit from "../utils/getCurrencyUnit";
-import sendReceiptData from "../utils/sendReceiptData";
-import Item from "../interfaces/Item";
-import setItem from "../utils/setItem";
-import { SubmitHandler, useForm } from "react-hook-form";
 
 const ViewExpense = () => {
     const search = useLocation().search;
