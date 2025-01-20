@@ -12,15 +12,19 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
-import { Backdrop, CircularProgress, Stack } from "@mui/material";
+import { Alert, Backdrop, CircularProgress, Stack } from "@mui/material";
 import ItemList from "../components/ItemList";
 import UploadReceipt from "../components/UploadReceipt";
 import { Button } from "@mui/material";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import getCurrencyUnit from "../utils/getCurrencyUnit";
 import sendReceiptData from "../utils/sendReceiptData";
 import Item from "../interfaces/Item";
 import setItem from "../utils/setItem";
 import { SubmitHandler, useForm } from "react-hook-form";
+
+import '../styles/ViewItems.scss';
 
 const ViewItems = () => {
     const search = useLocation().search;
@@ -38,6 +42,13 @@ const ViewItems = () => {
     });
 
     const [loadingOpen, setLoadingOpen] = useState<boolean>(true);
+    const [errState, setErrState] = useState<{ 
+        open: boolean;
+        msg: string;
+    }>({
+        open: false,
+        msg: ""
+    });
 
     const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Inputs>();
 
@@ -54,11 +65,27 @@ const ViewItems = () => {
             setValue("cost", String(item.cost));
         }
     };
-    const handleClose = () => {
+
+    const handleDialogClose = () => {
         setDialogState({
             open: false,
             itemId: null
         });
+    };
+
+    const handleErrClose = (
+        _: React.SyntheticEvent | Event,
+        reason?: SnackbarCloseReason,
+    ) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        else {
+            setErrState((prevState) => ({
+                ...prevState,
+                open: false
+            }));
+        }
     };
 
     type Inputs = {
@@ -74,12 +101,20 @@ const ViewItems = () => {
     const onSubmit: SubmitHandler<Inputs> = async(data: Inputs) => {
         if (dialogState.itemId) {
             const item: Item = { id: dialogState.itemId, name: data.name, cost: Number(data.cost) };
-            handleClose();
+            handleDialogClose();
             setLoadingOpen(true);
             await setItem(item)
                 .then(async res => {
-                    if (res.message == 'Success') {
+                    if (res && res.message == 'Success') {
                         retrieveExpenseInfo();
+                    }
+                    else {
+                        setErrState({
+                            open: true,
+                            msg: "Could not update item. Please try again."
+                        });
+
+                        setLoadingOpen(false);
                     }
                     /*
                     if (res.data.expenseId !== undefined) {
@@ -123,10 +158,10 @@ const ViewItems = () => {
         }
     }
 
-    const navItemise = () => {
+    const navView = () => {
         if (expenseId !== undefined) {
             navigate({
-                pathname: "/itemise",
+                pathname: "/view",
                 search: `?expenseId=${expenseId}`
             });
         }
@@ -135,26 +170,27 @@ const ViewItems = () => {
     return (
         <div className="content">
              <Paper id="header" square={true}>
-                <Typography className="frame-content" id="title-text" variant="h4">Items</Typography>
-            </Paper>
-            { expense !== undefined && (
-                <div>
-                    <Typography id="title-text" variant="h4">{expense.name}</Typography>
-                    { expense.items !== undefined && expense.items.length > 0 ? (
-                        <div>
-                            <ItemList items={expense.items} currency={currency} onItemSelect={handleItemSelect} />
-                            <Button variant="contained" onClick={navItemise}>Itemise</Button>
-                        </div>
-                    ) : (
-                        <Typography>No items to display</Typography>
-                        
-                    )}
+                <Stack className="frame-content" direction="row" spacing={0}>
+                    <Button id="header-back" onClick={navView}>
+                        <ArrowBackIosNewIcon />
+                    </Button>
+                    <Typography className="frame-content" id="title-text" variant="h4">Items</Typography>
                     { expense !== undefined && currency !== null && currency !== "" && (
                         <UploadReceipt onUpload={receiptUpload} />
                     )}
+                </Stack>
+            </Paper>
+            { expense !== undefined && (
+                <div>
+                    { expense.items && expense.items.length > 0 && currency && currency !== "" ? (
+                        <ItemList items={expense.items} currency={currency} onItemSelect={handleItemSelect} />
+                    ) : (
+                        <Typography>No items to display</Typography>
+                    )}
+                    
                 </div>
             )}
-            <Dialog open={dialogState.open} onClose={handleClose}>
+            <Dialog open={dialogState.open} onClose={handleDialogClose}>
                 <DialogTitle>Edit Item</DialogTitle>
                 <DialogContent>
                     <Stack>
@@ -187,7 +223,7 @@ const ViewItems = () => {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleDialogClose}>Cancel</Button>
                     <Button onClick={handleSubmit(onSubmit)}>Save</Button>
                 </DialogActions>
             </Dialog>
@@ -198,6 +234,16 @@ const ViewItems = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
+
+            <Snackbar open={errState.open} onClose={handleErrClose}>
+                <Alert
+                    onClose={handleErrClose}
+                    severity="error"
+                    variant="filled"
+                >
+                    {errState.msg}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };
