@@ -51,7 +51,6 @@ def upload_expense():
 
 
 def get_sw_currency_unit(currency_code: str):
-    print(currency_code)
     return next((curr["unit"] for curr in get_sw_currencies()["currencies"] if curr["currency_code"] == currency_code), "")
 
 
