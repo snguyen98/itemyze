@@ -15,7 +15,6 @@ import Item from "../interfaces/Item";
 import User from "../interfaces/User";
 import Allocation from "../interfaces/Allocation";
 import getExpenseInfo from "../utils/getExpenseInfo";
-import getGroupMembers from "../utils/getGroupMembers";
 import AllocationList from "../components/AllocationList";
 
 import '../styles/ItemiseExpense.scss';
