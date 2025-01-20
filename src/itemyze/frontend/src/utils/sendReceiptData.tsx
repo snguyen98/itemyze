@@ -16,7 +16,7 @@ async function sendReceiptData(expenseId: Number, file: File, currency: string) 
     try {
         const res = await axios({
         method: 'post', 
-        url: 'http://127.0.0.1:8000/api/process_receipt', 
+        url: '/api/process_receipt', 
         data: formData,
         headers: {
             'Content-Type': 'multipart/form-data',

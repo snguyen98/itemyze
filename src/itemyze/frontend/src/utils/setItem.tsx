@@ -17,7 +17,7 @@ async function setItem(item: Item) {
     try {
         let res = await axios({
         method: 'post', 
-        url: 'http://127.0.0.1:8000/api/edit_item', 
+        url: '/api/edit_item', 
         data: formData,
         headers: {
             'Content-Type': 'multipart/form-data',

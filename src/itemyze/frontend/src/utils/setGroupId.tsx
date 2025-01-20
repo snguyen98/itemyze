@@ -15,7 +15,7 @@ async function setGroupId(expenseId: number, groupId: string) {
     try {
         let res = await axios({
         method: 'post', 
-        url: 'http://127.0.0.1:8000/api/set_group', 
+        url: '/api/set_group', 
         data: formData,
         headers: {
             'Content-Type': 'multipart/form-data',
