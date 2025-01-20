@@ -1,11 +1,12 @@
-import sendReceiptData from '../utils/sendReceiptData';
-
+import Button from '@mui/material/Button';
 import '../styles/UploadReceipt.scss';
+import Box from '@mui/material/Box';
 
 function UploadReceipt({onUpload}: {onUpload: (receipt: File) => void}) {
   return (
-    <div className="content">
-        <input 
+    <Box id="header-upload">
+        <input
+          id="file-input"
           className="form-item" 
           type="file"
           onChange={ async (e) => {
@@ -14,7 +15,12 @@ function UploadReceipt({onUpload}: {onUpload: (receipt: File) => void}) {
             }
           }}
         />
-    </div>
+        <label htmlFor="file-input">
+          <Button variant="text" component="span">
+            Upload
+          </Button>
+      </label>
+    </Box>
   );
 }
 
