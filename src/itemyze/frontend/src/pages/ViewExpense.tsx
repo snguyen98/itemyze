@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 import Expense from "../interfaces/Expense";
 import getExpense from "../utils/getExpense";
-import Chip from "@mui/material/Chip";
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Backdrop, CircularProgress, Stack } from "@mui/material";
 import { Button } from "@mui/material";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const ViewExpense = () => {
     const search = useLocation().search;
@@ -44,23 +44,41 @@ const ViewExpense = () => {
         }
     }
 
+    const navItemise = () => {
+        if (expenseId !== undefined) {
+            navigate({
+                pathname: "/itemise",
+                search: `?expenseId=${expenseId}`
+            });
+        }
+    }
+
+    const navHome = () => {
+        navigate({pathname: "/"});
+    }
+
+
     return (
         <div className="content">
              <Paper id="header" square={true}>
+                <Button id="header-back" onClick={navHome}>
+                    <ArrowBackIosNewIcon />
+                </Button>
                 <Typography className="frame-content" id="title-text" variant="h4">Details</Typography>
             </Paper>
             { expense !== undefined && (
                 <div>
                     <Typography id="title-text" variant="h4">{expense.name}</Typography>
                     <Typography variant="h6">Currency: {expense.currency}</Typography>
-                    <Chip label={`Receipt ${expense.receiptStatus}`} color="primary" />
-                    <Chip label={`Sync ${expense.syncStatus}`} color="success" />
                     <Divider />
                     <Typography variant="h6">Splitwise</Typography>
                     <Typography>Expense: {expense.splitwiseId}</Typography>
                     <Typography>Group: {expense.splitwiseGroup}</Typography>
                     <Divider />
-                    <Button onClick={navViewItems}>Items</Button>
+                    <Stack direction="column">
+                        <Button onClick={navViewItems}>View Items</Button>
+                        <Button onClick={navItemise}>Itemise</Button>
+                    </Stack>
                 </div>
             )}
 
