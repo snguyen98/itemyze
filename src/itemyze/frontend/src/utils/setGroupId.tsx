@@ -1,29 +1,22 @@
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 async function setGroupId(expenseId: number, groupId: string) {
     const formData = new FormData();
     formData.append("expenseId", String(expenseId));
     formData.append("groupId", String(groupId));
-    /*
+    
     const csrftoken = Cookies.get('csrftoken');
-    axios.defaults.xsrfHeaderName = 'x-csrftoken';
-    axios.defaults.xsrfCookieName = 'csrftoken'
-    axios.defaults.withCredentials = true;
 
-    console.log("Token: " + csrftoken);
-    */
     try {
-        let res = await axios({
-        method: 'post', 
-        url: '/api/set_group', 
-        data: formData,
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            //'X-CSRFToken': csrftoken
-        },
-        //xsrfCookieName: 'csrftoken',
-        //xsrfHeaderName: 'X-CSRFToken',
-        //withCredentials: true
+        const res = await axios({
+            method: 'post', 
+            url: '/api/set_group', 
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'X-CSRFToken': csrftoken
+            }
         })
 
         return res.data;

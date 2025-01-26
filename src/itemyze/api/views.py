@@ -30,7 +30,7 @@ def get_groups(_):
 
     return JsonResponse({ "groups": groups })
 
-@csrf_exempt
+
 def process_receipt(request):
     if request.method == 'POST':
         expense_id = request.POST.get("expense_id")
@@ -74,7 +74,6 @@ def process_receipt(request):
         return JsonResponse(status=400, data={ "status": "false", "message": "Request must be POST for this endpoint" })
 
 
-@csrf_exempt
 def create_expense(request):
     body = json.loads(request.body)
 
@@ -138,7 +137,7 @@ def get_expenses(_):
 def get_currencies(_):
     return JsonResponse(get_sw_currencies())
 
-@csrf_exempt
+
 def edit_item(request):
     if request.method == 'POST':
         item_id = request.POST.get("itemId")
@@ -157,7 +156,6 @@ def edit_item(request):
         return JsonResponse(status=400, data={ "status": "false", "message": "Request must be POST for this endpoint" })
     
 
-@csrf_exempt
 def set_group(request):
     if request.method == 'POST':
         expense_id = request.POST.get("expenseId")
@@ -171,7 +169,6 @@ def set_group(request):
         return JsonResponse(status=400, data={ "status": "false", "message": "Request must be POST for this endpoint" })
     
 
-@csrf_exempt
 def save_allocations(request):
     if request.method == 'POST':
         body = json.loads(request.body)
@@ -192,7 +189,6 @@ def save_allocations(request):
         return JsonResponse(status=400, data={ "status": "false", "message": "Request must be POST for this endpoint" })
 
 
-@csrf_exempt
 def post_expense(request):
     if request.method == 'POST':
         body = json.loads(request.body)

@@ -1,4 +1,6 @@
 import axios from "axios";
+import Cookies from 'js-cookie';
+
 import Item from "../interfaces/Item";
 
 async function setItem(item: Item) {
@@ -6,26 +8,18 @@ async function setItem(item: Item) {
     formData.append("itemId", String(item.id));
     formData.append("name", item.name);
     formData.append("cost", String(item.cost));
-    /*
+    
     const csrftoken = Cookies.get('csrftoken');
-    axios.defaults.xsrfHeaderName = 'x-csrftoken';
-    axios.defaults.xsrfCookieName = 'csrftoken'
-    axios.defaults.withCredentials = true;
-
-    console.log("Token: " + csrftoken);
-    */
+    
     try {
-        let res = await axios({
-        method: 'post', 
-        url: '/api/edit_item', 
-        data: formData,
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            //'X-CSRFToken': csrftoken
-        },
-        //xsrfCookieName: 'csrftoken',
-        //xsrfHeaderName: 'X-CSRFToken',
-        //withCredentials: true
+        const res = await axios({
+            method: 'post', 
+            url: '/api/edit_item', 
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'X-CSRFToken': csrftoken
+            }
         })
 
         return res.data;
