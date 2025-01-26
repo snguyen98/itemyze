@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import Typography from '@mui/material/Typography';
@@ -10,6 +10,7 @@ import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import Backdrop from "@mui/material/Backdrop";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 import Item from "../interfaces/Item";
 import User from "../interfaces/User";
@@ -25,6 +26,8 @@ import Dict from "../interfaces/Dict";
 
 const ItemiseExpense = () => {
     const search = useLocation().search;
+    const navigate = useNavigate();
+
     const expenseId = Number(new URLSearchParams(search).get("expenseId"));
     const [items, setItems] = useState<Item[]>([]);
     const [users, setUsers] = useState<User[]>([]);
@@ -149,11 +152,23 @@ const ItemiseExpense = () => {
                     setErrorMsg("An error occurred when saving. Please try again.")
                     setShowError(true);
                 }
+                else {
+                    navView()
+                }
             });
         }
         else {
             setErrorMsg("Please itemise the remaining items");
             setShowError(true);
+        }
+    }
+
+    const navView = () => {
+        if (expenseId !== undefined) {
+            navigate({
+                pathname: "/view",
+                search: `?expenseId=${expenseId}`
+            });
         }
     }
     
@@ -162,6 +177,9 @@ const ItemiseExpense = () => {
             <Stack id="header" direction="column" spacing={0}>
                 <Paper square={true}>
                     <Stack className="frame-content" direction="row" spacing={0}>
+                        <Button id="header-back" onClick={navView}>
+                            <ArrowBackIosNewIcon />
+                        </Button>
                         <Typography id="title-text" variant="h4">Itemise</Typography>
                         <Button id="header-submit" variant="text" onClick={saveItemisation}>Save</Button>
                     </Stack>
