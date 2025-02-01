@@ -15,7 +15,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Item from "../interfaces/Item";
 import User from "../interfaces/User";
 import Allocation from "../interfaces/Allocation";
-import getExpenseInfo from "../utils/getExpenseInfo";
+import getExpense from "../utils/getExpense";
 import AllocationList from "../components/AllocationList";
 
 import '../styles/ItemiseExpense.scss';
@@ -42,12 +42,12 @@ const ItemiseExpense = () => {
 
     useEffect(() => {
         if (expenseId !== undefined) {
-            getExpenseInfo(Number(expenseId))
+            getExpense(Number(expenseId), true, true)
                 .then(res => {
-                    setItems(res.data.items);
-                    setTotal(res.data.total);
-                    setCurrency(res.data.currency);
-                    setUsers(res.data.members);
+                    setItems(res.items);
+                    setTotal(res.total);
+                    setCurrency(res.currency);
+                    setUsers(res.members);
                 });
         }
     }, [expenseId]);
@@ -198,18 +198,20 @@ const ItemiseExpense = () => {
                             >
                                 <Typography>{item.name}</Typography>
                                 <Stack className="avatar-display" direction="row">
-                                    { users.filter(user => checked[item.id][user.id]).map(user => (
-                                        <Avatar className="avatar-img" alt={user.fname} src={user.avatar}/>
+                                    { Object.keys(checked).length !== 0 && users.filter(user => checked[item.id][user.id]).map(user => (
+                                        <Avatar key={user.id} className="avatar-img" alt={user.fname} src={user.avatar}/>
                                     ))}
                                 </Stack>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <AllocationList
-                                    item={item} 
-                                    users={users} 
-                                    selectedUsers={checked[item.id]} 
-                                    onSelect={toggleSelect} 
-                                />
+                                { Object.keys(checked).length !== 0 && 
+                                    <AllocationList
+                                        item={item} 
+                                        users={users} 
+                                        selectedUsers={checked[item.id]} 
+                                        onSelect={toggleSelect} 
+                                    />
+                                }
                             </AccordionDetails>
                         </Accordion>
                     ))

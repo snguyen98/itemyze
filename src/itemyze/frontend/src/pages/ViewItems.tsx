@@ -141,7 +141,7 @@ const ViewItems = () => {
 
     const retrieveExpenseInfo = () => {
         if (expenseId !== undefined && expenseId > 0) {
-            getExpense(expenseId)
+            getExpense(expenseId, true, false)
                 .then(res => {
                     setExpense(res);
                 });

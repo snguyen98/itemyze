@@ -10,9 +10,9 @@ import Dict from "../interfaces/Dict";
 
     try {
         const res = await axios
-            .get('/api/get_expenses')
+            .get('/api/expenses')
             .then(axiosResp => {
-                return axiosResp.data.expenses.map(camelize);
+                return axiosResp.data.map(camelize);
             })
 
         return res
