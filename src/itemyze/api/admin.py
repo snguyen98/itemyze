@@ -30,7 +30,7 @@ class ItemAdmin(admin.ModelAdmin):
 class AllocationAdmin(admin.ModelAdmin):
     list_display = (
         'id',
-        'sw_user_id',
+        'splitwise_user',
         'amount',
         'get_expense',
     )

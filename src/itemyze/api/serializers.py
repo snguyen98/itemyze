@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Expense, Item
+from .models import Expense, Item, Allocation
 from .tools.splitwise import get_sw_group_name
 
 class ExpenseSerializer(serializers.ModelSerializer):
@@ -41,3 +41,12 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
 
         fields = ['id','name','cost']
+
+
+class AllocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Allocation
+
+        fields = ['id','splitwise_user','amount','expense']
+
+

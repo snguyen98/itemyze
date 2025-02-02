@@ -51,7 +51,7 @@ class Item(models.Model):
             raise ValidationError(msg)
         
 class Allocation(models.Model):
-    sw_user_id = models.IntegerField()
+    splitwise_user = models.IntegerField()
     amount = models.DecimalField(max_digits=11, decimal_places=2, null=True)
     expense = models.ForeignKey(Expense, on_delete=models.CASCADE)
     created_on = models.DateField(auto_now_add=True)
@@ -69,7 +69,7 @@ class Allocation(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['sw_user_id', 'expense'],
+                fields=['splitwise_user', 'expense'],
                 name='user_expense_unique',
             )
         ]

@@ -2,27 +2,68 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.http import JsonResponse
-
-from json import loads
-
 from ..models import Expense, Allocation
+from ..serializers import AllocationSerializer
 
-def save_allocations(request):
-    if request.method == 'POST':
-        body = loads(request.body)
+@api_view(['GET', 'POST'])
+def allocation_list(request, id=None):
+    """
+    Handles:
+    - GET /allocations → Retrieve a list of all allocations or filter via query params.
+    - GET /allocations/{id} → Retrieve a specific allocation.
+    - POST /allocations → Create a new allocation.
+    """
+    if request.method == 'GET':
+        if id:
+            # Retrieve a specific allocation
+            try:
+                allocation = Allocation.objects.get(id=id)
+            except Allocation.DoesNotExist:
+                return Response({"error": "Allocation not found."}, status=status.HTTP_404_NOT_FOUND)
+            
+            serializer = AllocationSerializer(allocation)
+            response_data = serializer.data
 
-        allocations = body["allocations"]
-        expense = Expense.objects.get(id=body["expenseId"])
+            return Response(response_data)
 
-        for allocation in allocations:
-            Allocation.objects.update_or_create(
-                sw_user_id = allocation["user"],
-                expense = expense,
-                defaults= { "amount": allocation["amount"] }
-            )
+        # Retrieve all allocations or filter by query parameters
+        allocations = Allocation.objects.all()
+        serializer = AllocationSerializer(allocations, many=True)
 
-        return JsonResponse({ "message": "Success" })
+        return Response(serializer.data)
 
-    else:
-        return JsonResponse(status=400, data={ "status": "false", "message": "Request must be POST for this endpoint" })
+    elif request.method == 'POST':
+        # Check if request is for bulk create/update
+        if isinstance(request.data["allocations"], list):  # Expecting a list of allocation objects
+            expense = Expense.objects.get(id=request.data["expenseId"])
+
+            for allocation in request.data["allocations"]:
+                Allocation.objects.update_or_create(
+                    splitwise_user = allocation["user"],
+                    expense = expense,
+                    defaults = { "amount": allocation["amount"] }
+                )
+
+            return Response({"message": "Bulk operation successful"}, status=status.HTTP_200_OK)
+        
+        if id:
+            # Update an existing allocation
+            try:
+                allocation = Allocation.objects.get(id=id)
+            except Allocation.DoesNotExist:
+                return Response({"error": "Allocation not found."}, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = AllocationSerializer(allocation, data=request.data, partial=True)  # Allows partial updates
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        else:
+            # Create a new allocation
+            serializer = AllocationSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

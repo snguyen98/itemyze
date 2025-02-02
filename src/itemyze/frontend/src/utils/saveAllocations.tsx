@@ -9,7 +9,7 @@ async function saveAllocations(expenseId: number, allocations: Dict[]) {
     try {
         const res = await axios({
             method: 'post', 
-            url: '/api/save_allocations', 
+            url: '/api/allocations', 
             data: {
                 expenseId: expenseId,
                 allocations: allocations
