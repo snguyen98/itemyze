@@ -61,7 +61,7 @@ function Home() {
                 <Divider variant="inset" component="li" />
                 { expenses !== undefined && expenses.length > 0 && 
                     expenses.map((expense) => (
-                        <div>
+                        <div key={expense.id}>
                             <ListItemButton onClick={() => clickItem(expense.id)}>
                                 <ListItemText
                                     primary={expense.name}

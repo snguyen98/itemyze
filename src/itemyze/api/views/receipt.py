@@ -56,11 +56,9 @@ def process_receipt(request):
         return JsonResponse(status=400, data={ "status": "false", "message": "Request must be POST for this endpoint" })
 
 
-
 def get_currencies(_):
     return JsonResponse(get_sw_currencies())
 
-    
 
 def get_currency_unit(request):
     currency_code = request.GET.get("currency_code")
