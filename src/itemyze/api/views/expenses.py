@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from json import loads
 
 from ..models import Expense, Item
-from ..tools.splitwise import get_sw_groups, get_sw_group_members, get_sw_group_name
+from ..tools.splitwise import get_sw_group_members
 from ..serializers import ExpenseSerializer, ItemSerializer
 
 
@@ -63,63 +63,6 @@ def expense_list(request, id=None):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-@api_view(['POST'])
-def create_expense(request):
-    body = request.data
-
-    name = body["name"]
-    group = body["group"]
-    currency = body["currency"]
-
-    expense = Expense(
-        name=name,
-        splitwise_group = group,
-        currency=currency
-    )
-
-    expense.save()
-
-    return Response(status=status.HTTP_200_OK)
-
-
-def get_expense(request):
-    expense = Expense.objects.get(id=request.GET.get("expense_id"))
-    items = Item.objects.filter(expense=expense)
-
-    members = [{ "id": member["id"], 
-                 "fname": member["first_name"], 
-                 "lname": str(member["last_name"] or ""),
-                 "avatar": member["picture"]["small"]}
-              for member in get_sw_group_members(id)]
-
-    return JsonResponse({
-        "id": expense.id,
-        "name": expense.name,
-        "currency": expense.currency,
-        "receipt_status": expense.get_receipt_status_display(),
-        "sync_status": expense.get_sync_status_display(),
-        "splitwise_id": expense.splitwise_id,
-        "splitwise_group": get_sw_group_name(id=expense.splitwise_group),
-        "members": members,
-        #"created_by": expense.created_by,
-        "items": list(items.values()),
-    })
-
-
-def get_expenses(_):
-    expenses = [{ "id": expense.id,
-                  "name": expense.name,
-                  "currency": expense.currency,
-                  "receipt_status": expense.get_receipt_status_display(),
-                  "sync_status": expense.get_sync_status_display(),
-                  "splitwise_id": expense.splitwise_id,
-                  "splitwise_group": get_sw_group_name(id=expense.splitwise_group) } 
-                 for expense in Expense.objects.all()]
-
-    return JsonResponse({ "expenses": expenses })
 
 
 def edit_item(request):

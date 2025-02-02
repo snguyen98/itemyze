@@ -7,10 +7,10 @@ async function createExpense(name: string, group: number, currency: string) {
     try {
         const res = await axios({
             method: 'post', 
-            url: '/api/create_expense', 
+            url: '/api/expenses', 
             data: {
                 name: name,
-                group: group,
+                splitwise_group: group,
                 currency: currency
             },
             headers: {

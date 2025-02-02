@@ -6,9 +6,12 @@ interface Expense {
     name: string,
     currency: string,
     receiptStatus: string,
+    receiptStatusLabel: string,
     syncStatus: string,
+    syncStatusLabel: string,
     splitwiseId: number,
-    splitwiseGroup: string,
+    splitwiseGroup: number,
+    splitwiseGroupName: string,
     members: User[],
     createdBy: User,
     items: Item[]

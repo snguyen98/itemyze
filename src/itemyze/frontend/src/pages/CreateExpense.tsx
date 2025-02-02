@@ -37,10 +37,10 @@ const CreateExpense = () => {
     const onSubmit: SubmitHandler<Inputs> = async(data: Inputs) => {
         await createExpense(data.name, Number(data.group), data.currency)
             .then(res => {
-                if (res.data.expenseId !== undefined) {
+                if (res.data.id !== undefined) {
                     navigate({
                         pathname: "/view",
-                        search: `?expenseId=${res.data.expenseId}`
+                        search: `?expenseId=${res.data.id}`
                     });
                 }
             });

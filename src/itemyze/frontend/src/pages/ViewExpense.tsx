@@ -73,7 +73,7 @@ const ViewExpense = () => {
                     <Divider />
                     <Typography variant="h6">Splitwise</Typography>
                     <Typography>Expense: {expense.splitwiseId}</Typography>
-                    <Typography>Group: {expense.splitwiseGroup}</Typography>
+                    <Typography>Group: {expense.splitwiseGroupName}</Typography>
                     <Divider />
                     <Stack direction="column">
                         <Button onClick={navViewItems}>View Items</Button>

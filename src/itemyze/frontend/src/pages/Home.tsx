@@ -65,10 +65,10 @@ function Home() {
                             <ListItemButton onClick={() => clickItem(expense.id)}>
                                 <ListItemText
                                     primary={expense.name}
-                                    secondary={expense.splitwiseGroup} />
+                                    secondary={expense.splitwiseGroupName} />
                                 <ListItemText primary={expense.currency} />
-                                <ListItemText primary={`Receipt ${expense.receiptStatus}`} />
-                                <ListItemText primary={`Sync ${expense.syncStatus}`} />
+                                <ListItemText primary={`Receipt ${expense.receiptStatusLabel}`} />
+                                <ListItemText primary={`Sync ${expense.syncStatusLabel}`} />
                                 <ChevronRightIcon />
                             </ListItemButton>
                             <Divider />
