@@ -20,7 +20,7 @@ import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import getCurrencyUnit from "../utils/getCurrencyUnit";
 import sendReceiptData from "../utils/sendReceiptData";
 import Item from "../interfaces/Item";
-import setItem from "../utils/setItem";
+import updateItem from "../utils/updateItem";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import '../styles/ViewItems.scss';
@@ -102,9 +102,9 @@ const ViewItems = () => {
             const item: Item = { id: dialogState.itemId, name: data.name, cost: Number(data.cost) };
             handleDialogClose();
             setLoadingOpen(true);
-            await setItem(item)
+            await updateItem(item)
                 .then(async res => {
-                    if (res && res.message == 'Success') {
+                    if (res && res.status === 200) {
                         retrieveExpenseInfo();
                     }
                     else {
@@ -115,13 +115,6 @@ const ViewItems = () => {
 
                         setLoadingOpen(false);
                     }
-                    /*
-                    if (res.data.expenseId !== undefined) {
-                        navigate({
-                            pathname: "/view",
-                            search: `?expenseId=${res.data.expenseId}`
-                        });
-                    }*/
                 });
         }
     }

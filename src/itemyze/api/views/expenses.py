@@ -81,3 +81,54 @@ def edit_item(request):
 
     else:
         return JsonResponse(status=400, data={ "status": "false", "message": "Request must be POST for this endpoint" })
+    
+
+@api_view(['GET', 'POST'])
+def item_list(request, id=None):
+    """
+    Handles:
+    - GET /items → Retrieve a list of all items or filter via query params.
+    - GET /item/{id} → Retrieve a specific item.
+    - POST /items → Create a new item.
+    """
+    if request.method == 'GET':
+        if id:
+            # Retrieve a specific item
+            try:
+                item = Item.objects.get(id=id)
+            except Item.DoesNotExist:
+                return Response({"error": "Item not found."}, status=status.HTTP_404_NOT_FOUND)
+            
+            serializer = ItemSerializer(item)
+            response_data = serializer.data
+
+            return Response(response_data)
+
+        # Retrieve all items or filter by query parameters
+        items = Item.objects.all()
+        serializer = ItemSerializer(items, many=True)
+
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        if id:
+            # Update an existing item
+            try:
+                item = Item.objects.get(id=id)
+            except Item.DoesNotExist:
+                return Response({"error": "Item not found."}, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = ItemSerializer(item, data=request.data, partial=True)  # Allows partial updates
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        else:
+            # Create a new item
+            serializer = ItemSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

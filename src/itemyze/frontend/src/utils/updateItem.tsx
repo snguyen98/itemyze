@@ -1,17 +1,19 @@
 import axios from "axios";
 import Cookies from 'js-cookie';
 
-async function setGroupId(expenseId: number, groupId: string) {
+import Item from "../interfaces/Item";
+
+async function updateItem(item: Item) {
     const formData = new FormData();
-    formData.append("expenseId", String(expenseId));
-    formData.append("groupId", String(groupId));
+    formData.append("name", item.name);
+    formData.append("cost", String(item.cost));
     
     const csrftoken = Cookies.get('csrftoken');
-
+    
     try {
         const res = await axios({
             method: 'post', 
-            url: '/api/set_group', 
+            url: `/api/items/${item.id}/`, 
             data: formData,
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -19,11 +21,11 @@ async function setGroupId(expenseId: number, groupId: string) {
             }
         })
 
-        return res.data;
+        return res;
     }
     catch (err) {
         console.error(err);
     }
 }
 
-export default setGroupId;
+export default updateItem;
