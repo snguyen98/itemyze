@@ -18,7 +18,7 @@ class Expense(models.Model):
 
     name = models.CharField(max_length=255, blank=False)
     total = models.DecimalField(max_digits=11, decimal_places=2, null=True)
-    currency = models.CharField(max_length=1)
+    currency = models.CharField(max_length=3)
     receipt_status = models.IntegerField(
         choices=ReceiptStatus.choices,
         default=ReceiptStatus.PENDING,
