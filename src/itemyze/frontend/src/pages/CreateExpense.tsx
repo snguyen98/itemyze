@@ -21,7 +21,7 @@ const CreateExpense = () => {
     useEffect(() => {
         axios
           .get('/api/get_groups')
-          .then(res => setGroups(res.data.groups));
+          .then(res => setGroups(res.data));
     
         axios
           .get('/api/get_currencies')

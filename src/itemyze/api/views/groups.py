@@ -1,10 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import JsonResponse
 
 from ..tools.splitwise import get_sw_groups
 
+@api_view(['GET'])
 def get_groups(_):
     groups = [
         {
@@ -21,4 +21,4 @@ def get_groups(_):
         } for group in get_sw_groups()
     ]
 
-    return JsonResponse({ "groups": groups })
+    return Response(groups, status=status.HTTP_200_OK)
