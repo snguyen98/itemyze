@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 
 import Item from "../interfaces/Item";
 
-async function updateItem(item: Item) {
+async function editItem(item: Item) {
     const formData = new FormData();
     formData.append("name", item.name);
     formData.append("cost", String(item.cost));
@@ -28,4 +28,4 @@ async function updateItem(item: Item) {
     }
 }
 
-export default updateItem;
+export default editItem;

@@ -9,7 +9,7 @@ import '../styles/Home.scss';
 import getExpenses from '../utils/getExpenses';
 import Expense from '../interfaces/Expense';
 
-function Home() {
+const Home = () => {
     const navigate = useNavigate();
 
     const [expenses, setExpenses] = useState<Expense[]>([]); 

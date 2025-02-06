@@ -10,6 +10,9 @@ import Typography from '@mui/material/Typography';
 import { Backdrop, CircularProgress, Stack } from "@mui/material";
 import { Button } from "@mui/material";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import EditIcon from '@mui/icons-material/Edit';
+
+import '../styles/ViewExpense.scss';
 
 const ViewExpense = () => {
     const search = useLocation().search;
@@ -57,14 +60,27 @@ const ViewExpense = () => {
         navigate({pathname: "/"});
     }
 
+    const navEdit = () => {
+        if (expenseId !== undefined) {
+            navigate({
+                pathname: "/edit",
+                search: `?expenseId=${expenseId}`
+            });
+        }
+    }
 
     return (
         <div className="content">
              <Paper id="header" square={true}>
-                <Button id="header-back" onClick={navHome}>
-                    <ArrowBackIosNewIcon />
-                </Button>
-                <Typography className="frame-content" id="title-text" variant="h4">Details</Typography>
+                <Stack className="frame-content" direction="row" spacing={0}>
+                    <Button id="header-back" onClick={navHome}>
+                        <ArrowBackIosNewIcon />
+                    </Button>
+                    <Typography className="frame-content" id="title-text" variant="h4">Details</Typography>
+                    <Button id="header-edit" onClick={navEdit}>
+                        <EditIcon />
+                    </Button>
+                </Stack>
             </Paper>
             { expense !== undefined && (
                 <div>
