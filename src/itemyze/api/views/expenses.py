@@ -4,7 +4,7 @@ from rest_framework import status
 from json import loads
 
 from ..models import Expense, Item
-from ..tools.splitwise import get_sw_group_members
+from ..tools.splitwise import get_sw_groups, get_sw_group
 from ..serializers import ExpenseSerializer, ItemSerializer
 
 
@@ -30,6 +30,9 @@ def expense_list(request, id=None):
             serializer = ExpenseSerializer(expense)
             response_data = serializer.data
 
+            group = get_sw_group(expense.splitwise_group)
+            response_data["splitwise_group_name"] = group["name"]
+
             # If includeItems=true, fetch related items
             if include_items:
                 items = Item.objects.filter(expense_id=id)
@@ -42,13 +45,19 @@ def expense_list(request, id=None):
                     "lname": str(member["last_name"] or ""),
                     "avatar": member["picture"]["small"]
                 }
-                for member in get_sw_group_members(expense.splitwise_group)]
+                for member in group["members"]]
 
             return Response(response_data)
 
         # Retrieve all expenses or filter by query parameters
         expenses = Expense.objects.all()
         serializer = ExpenseSerializer(expenses, many=True)
+        response_data = serializer.data
+
+        group_names = { group["id"]: group["name"] for group in get_sw_groups()}
+        
+        for expense in response_data:
+            expense["splitwise_group_name"] = group_names[expense["splitwise_group"]]
 
         return Response(serializer.data)
 

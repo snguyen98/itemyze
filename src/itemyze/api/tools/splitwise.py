@@ -28,13 +28,13 @@ def get_sw_groups():
     return groups
 
 
-def get_sw_group_members(id: int):
+def get_sw_group(id: int):
     session = get_oauth_session()
 
     res = session.get(f'https://secure.splitwise.com/api/v3.0/get_group/{id}')
-    members = json.loads(res.content)["group"]["members"]
+    group = json.loads(res.content)["group"]
 
-    return members
+    return group
 
 
 def get_sw_currencies():
