@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-import { Table, TableCell, TableContainer, TableHead, TableRow, Paper, TableBody, List, ListItem, ListItemText, ListItemButton, Divider, IconButton, Stack, Typography } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { Paper, List, ListItemText, ListItemButton, Divider, IconButton, Typography } from '@mui/material';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import '../styles/Home.scss';
@@ -76,9 +77,9 @@ const Home = () => {
                     ))
                 }
             </List>
-            <IconButton id="create-icon" size="large" onClick={clickCreate}>
-                <AddCircleIcon fontSize="inherit" />
-            </IconButton>
+            <Fab id="create-icon" color="primary" onClick={clickCreate}>
+                <AddIcon />
+            </Fab>
         </div>
     );
 };
