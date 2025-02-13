@@ -1,6 +1,6 @@
 import axios from "axios";
 
- async function getCurrencyUnit(currencyCode: string) {
+async function getCurrencyUnit(currencyCode: string) {
     try {
         const res = await axios
             .get('/api/get_currency_unit', {
