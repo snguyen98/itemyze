@@ -54,10 +54,8 @@ const Home = () => {
     }
 
     return (
-        <div className="content">
-            <Paper id="header" square={true}>
-                <Typography className="frame-content" id="title-text" variant="h4">Expense List</Typography>
-            </Paper>
+        <>
+            <Typography className="frame-content" id="title-text" variant="h4">Expense List</Typography>
             <List>
                 <Divider variant="inset" component="li" />
                 { expenses !== undefined && expenses.length > 0 && 
@@ -80,7 +78,7 @@ const Home = () => {
             <Fab id="create-icon" color="primary" onClick={clickCreate}>
                 <AddIcon />
             </Fab>
-        </div>
+        </>
     );
 };
 

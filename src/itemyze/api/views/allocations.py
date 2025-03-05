@@ -25,9 +25,16 @@ def allocation_list(request, id=None):
             response_data = serializer.data
 
             return Response(response_data)
+        
+        expense_id = request.GET.get("expenseId")
 
-        # Retrieve all allocations or filter by query parameters
-        allocations = Allocation.objects.all()
+        if expense_id:
+            # Retrieve allocations associated with Expense ID
+            allocations = Allocation.objects.filter(expense_id=expense_id)
+        else:
+            # Retrieve all allocations
+            allocations = Allocation.objects.all()
+        
         serializer = AllocationSerializer(allocations, many=True)
 
         return Response(serializer.data)

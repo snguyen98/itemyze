@@ -2,7 +2,7 @@ import axios from "axios";
 import * as changeCase from "change-case";
 import Dict from "../interfaces/Dict";
 
-async function getExpense(expenseId: number) {
+async function getAllocations(expenseId: number) {
     const camelize = (data: Dict) => Object.keys(data).reduce((acc: Dict, key: string) => {
         acc[changeCase.camelCase(key)] = data[key]
         return acc
@@ -10,10 +10,14 @@ async function getExpense(expenseId: number) {
 
     try {
         const res = await axios
-            .get(`/api/expenses/${expenseId}/`)
+            .get('/api/allocations', {
+                params: {
+                    expenseId
+                }
+            })
             .then(axiosResp => {
-                return camelize(axiosResp.data);
-            });
+                return axiosResp.data.map(camelize);
+            })
 
         return res
     }
@@ -22,4 +26,4 @@ async function getExpense(expenseId: number) {
     }
 }
 
-export default getExpense;
+export default getAllocations;

@@ -17,6 +17,7 @@ const EditExpense = () => {
     type Inputs = {
         name: string,
         group: string,
+        user: string,
         currency: string,
     };
 
@@ -34,7 +35,7 @@ const EditExpense = () => {
     }
 
     const onSubmit: SubmitHandler<Inputs> = async(data: Inputs) => {
-        await editExpense(expenseId, data.name, Number(data.group), data.currency)
+        await editExpense(expenseId, data.name, Number(data.group), Number(data.user), data.currency)
             .then(res => {
                 if (res.data.id !== undefined) {
                     navigate({
@@ -46,12 +47,13 @@ const EditExpense = () => {
     }
 
     return (
-        expense !== undefined && expense.name !== undefined && expense.splitwiseGroup !== undefined && expense.currency !== undefined ?
+        expense !== undefined && expense.name !== undefined && expense.splitwiseGroup !== undefined && expense.currency !== undefined && expense.splitwisePaidBy !== undefined ?
             <ExpenseForm<Inputs>
                 onSubmit={onSubmit}
                 defaultValues={{
                     name: expense.name,
                     group: String(expense.splitwiseGroup),
+                    user: String(expense.splitwisePaidBy),
                     currency: expense.currency
                 }}
             />

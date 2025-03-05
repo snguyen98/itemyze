@@ -1,11 +1,11 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from json import loads
 
-from ..models import Expense, Item
-from ..tools.splitwise import get_sw_groups, get_sw_group
-from ..serializers import ExpenseSerializer, ItemSerializer
+from ..models import Allocation, Expense, Item
+from ..tools.splitwise import get_sw_groups, get_sw_group, get_sw_currency_unit
+from ..tools.splitwise import create_expense, update_expense
+from ..serializers import AllocationSerializer, ExpenseSerializer, ItemSerializer
 
 
 @api_view(['GET', 'POST'])
@@ -18,9 +18,6 @@ def expense_list(request, id=None):
     """
     if request.method == 'GET':
         if id:
-            include_items = request.GET.get("includeItems", "false").lower() == "true"
-            include_users = request.GET.get("includeUsers", "false").lower() == "true"
-
             # Retrieve a specific expense
             try:
                 expense = Expense.objects.get(id=id)
@@ -32,20 +29,7 @@ def expense_list(request, id=None):
 
             group = get_sw_group(expense.splitwise_group)
             response_data["splitwise_group_name"] = group["name"]
-
-            # If includeItems=true, fetch related items
-            if include_items:
-                items = Item.objects.filter(expense_id=id)
-                response_data["items"] = ItemSerializer(items, many=True).data
-
-            if include_users:
-                response_data["members"] = [{ 
-                    "id": member["id"], 
-                    "fname": member["first_name"], 
-                    "lname": str(member["last_name"] or ""),
-                    "avatar": member["picture"]["small"]
-                }
-                for member in group["members"]]
+            response_data["currency_unit"] = get_sw_currency_unit(response_data["currency"])
 
             return Response(response_data)
 
@@ -106,8 +90,15 @@ def item_list(request, id=None):
 
             return Response(response_data)
 
-        # Retrieve all items or filter by query parameters
-        items = Item.objects.all()
+        expense_id = request.GET.get("expenseId")
+
+        if expense_id:
+            # Retrieve items associated with Expense ID
+            items = Item.objects.filter(expense_id=expense_id)
+        else:
+            # Retrieve all items
+            items = Item.objects.all()
+
         serializer = ItemSerializer(items, many=True)
 
         return Response(serializer.data)
@@ -134,3 +125,41 @@ def item_list(request, id=None):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+@api_view(['POST'])
+def upload_splitwise(_, id=None):
+    try:
+        expense = Expense.objects.get(id=id)
+    except Expense.DoesNotExist:
+        return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+    allocations = Allocation.objects.filter(expense_id=id)
+
+    if not allocations.exists():
+        return Response({"error": "Allocations not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    payload = {
+        "description": expense.name,
+        "cost": sum(a.amount for a in allocations),
+        "currency_code": expense.currency,
+        "group_id": expense.splitwise_group,
+    }
+
+    for index, val in enumerate(allocations):
+        payload[f"users__{index}__user_id"] = val.splitwise_user
+        payload[f"users__{index}__owed_share"] = val.amount
+    
+        payload[f"users__{index}__paid_share"] = payload["cost"] if val.splitwise_user == expense.splitwise_paid_by else 0
+
+    if expense.splitwise_id:
+        res = update_expense(id=id, payload=payload)
+
+    else:
+        res = create_expense(payload=payload)
+
+    if not res["errors"]:
+        return Response({"message": f"Expense data sent to splitwise: {res["expenses"][0]["id"]}"}, status=status.HTTP_200_OK)
+    
+    else:
+        return Response({"error": res["errors"]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

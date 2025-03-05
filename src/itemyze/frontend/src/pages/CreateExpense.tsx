@@ -10,11 +10,12 @@ const CreateExpense = () => {
     type Inputs = {
         name: string,
         group: string,
+        user: string,
         currency: string,
     };
 
     const onSubmit: SubmitHandler<Inputs> = async(data: Inputs) => {
-        await createExpense(data.name, Number(data.group), data.currency)
+        await createExpense(data.name, Number(data.group), Number(data.user), data.currency)
             .then(res => {
                 if (res.data.id !== undefined) {
                     navigate({

@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from 'js-cookie';
 
-async function createExpense(name: string, group: number, currency: string) {
+async function createExpense(name: string, group: number, user: number, currency: string) {
     const csrftoken = Cookies.get('csrftoken');
     
     try {
@@ -11,6 +11,7 @@ async function createExpense(name: string, group: number, currency: string) {
             data: {
                 name: name,
                 splitwise_group: group,
+                splitwise_paid_by: user,
                 currency: currency
             },
             headers: {

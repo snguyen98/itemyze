@@ -5,6 +5,7 @@ interface Expense {
     id: number,
     name: string,
     currency: string,
+    currencyUnit?: string,
     receiptStatus: string,
     receiptStatusLabel: string,
     syncStatus: string,
@@ -12,9 +13,10 @@ interface Expense {
     splitwiseId: number,
     splitwiseGroup: number,
     splitwiseGroupName: string,
-    members: User[],
-    createdBy: User,
-    items: Item[]
+    splitwisePaidBy: number,
+    members?: User[],
+    createdBy?: User,
+    items?: Item[]
 }
 
 export default Expense;

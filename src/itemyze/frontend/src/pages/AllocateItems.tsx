@@ -10,47 +10,36 @@ import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import Backdrop from "@mui/material/Backdrop";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 import Item from "../interfaces/Item";
 import User from "../interfaces/User";
 import Allocation from "../interfaces/Allocation";
-import getExpense from "../utils/getExpense";
 import AllocationList from "../components/AllocationList";
 
-import '../styles/ItemiseExpense.scss';
-import { Alert, Button } from "@mui/material";
 import saveAllocations from "../utils/saveAllocations";
 import Dict from "../interfaces/Dict";
+import Button from "@mui/material/Button";
 
+import '../styles/AllocateItems.scss';
 
-const ItemiseExpense = () => {
-    const search = useLocation().search;
-    const navigate = useNavigate();
+interface AllocateItemsProps {
+    expenseId: number;
+    items: Item[];
+    users: User[];
+    currencyUnit: string;
+    onClose: () => void;
+    onSave: () => void;
+    handleErr: (msg: string) => void;
+}
 
-    const expenseId = Number(new URLSearchParams(search).get("expenseId"));
-    const [items, setItems] = useState<Item[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
+const AllocateItems = ({expenseId, items, users, currencyUnit, onClose, onSave, handleErr}: AllocateItemsProps) => {
     const [total, setTotal] = useState<number>();
-    const [currency, setCurrency] = useState<string>("");
     const [checked, setChecked] = useState<{[itemId: number]: {[userId: number]: boolean}}>({});
     const [totals, setTotals] = useState<Allocation>({});
     const [selected, setSelected] = useState<number | false>(false);
     const [showTotals, setShowTotals] = useState<boolean>(false);
-    const [showError, setShowError] = useState<boolean>(false);
-    const [errorMsg, setErrorMsg] = useState<string>("");
-
-    useEffect(() => {
-        if (expenseId !== undefined) {
-            getExpense(Number(expenseId), true, true)
-                .then(res => {
-                    setItems(res.items);
-                    setTotal(res.total);
-                    setCurrency(res.currency);
-                    setUsers(res.members);
-                });
-        }
-    }, [expenseId]);
 
     useEffect(() => {
         const initChecked = items.reduce((itemArr, item) => ({
@@ -138,8 +127,6 @@ const ItemiseExpense = () => {
 
     const saveItemisation = () => {
         if (calcRemaining() == 0) {
-            setShowError(false);
-
             const allocations = users.map(user => ({
                 "user": String(user.id),
                 "amount": (totals[user.id] / 100).toFixed(2)
@@ -149,44 +136,27 @@ const ItemiseExpense = () => {
 
             resPromise.then((res) => {
                 if (res.status !== 200) {
-                    setErrorMsg("An error occurred when saving. Please try again.")
-                    setShowError(true);
+                    handleErr("An error occurred when saving. Please try again.")
                 }
                 else {
-                    navView()
+                    onSave();
                 }
             });
         }
         else {
-            setErrorMsg("Please itemise the remaining items");
-            setShowError(true);
-        }
-    }
-
-    const navView = () => {
-        if (expenseId !== undefined) {
-            navigate({
-                pathname: "/view",
-                search: `?expenseId=${expenseId}`
-            });
+            handleErr("Please itemise the remaining items");
         }
     }
     
     return (
-        <div className="content">
+        <>
             <Stack id="header" direction="column" spacing={0}>
-                <Paper square={true}>
-                    <Stack className="frame-content" direction="row" spacing={0}>
-                        <Button id="header-back" onClick={navView}>
-                            <ArrowBackIosNewIcon />
-                        </Button>
-                        <Typography id="title-text" variant="h4">Itemise</Typography>
-                        <Button id="header-submit" variant="text" onClick={saveItemisation}>Save</Button>
-                    </Stack>
-                </Paper>
-                { showError && 
-                    <Alert severity="error">{errorMsg}</Alert>
-                }
+                <Stack className="frame-content" direction="row" spacing={0}>
+                    <IconButton id="header-return" onClick={onClose}>
+                        <CloseIcon />
+                    </IconButton>
+                    <Button id="header-action" variant="text" onClick={saveItemisation}>Save</Button>
+                </Stack>
             </Stack>
             <Stack id="item-list">
                 { expenseId !== undefined && items.length !== 0 && users.length !== 0 && total !== undefined &&
@@ -220,8 +190,8 @@ const ItemiseExpense = () => {
             <Paper id="footer" sx={{ bottom: 0, left: 0, right: 0, bgcolor: 'lightgrey' }} square={true}>
                 <Stack className="frame-content" spacing={1} direction="row">
                     <Stack className="frame-content" direction="column">
-                        <Typography variant="body1">Total: <span>{`${Number(total).toFixed(2)} ${currency}`}</span></Typography>
-                        <Typography variant="body1">Remaining: <span>{`${Number(calcRemaining()).toFixed(2)} ${currency}`}</span></Typography>
+                        <Typography variant="body1">Total: <span>{`${Number(total).toFixed(2)} ${currencyUnit}`}</span></Typography>
+                        <Typography variant="body1">Remaining: <span>{`${Number(calcRemaining()).toFixed(2)} ${currencyUnit}`}</span></Typography>
                     </Stack>
                     <InfoOutlinedIcon onClick={showTotalPanel} />
                 </Stack>
@@ -232,14 +202,14 @@ const ItemiseExpense = () => {
                         <Typography variant="h5">Totals</Typography>
                         { users.map((user) => (
                             <Typography key={user.id} variant="body1">
-                                {`${user.fname} ${user.lname}: ${(totals[user.id] / 100).toFixed(2)} ${currency}`}
+                                {`${user.fname} ${user.lname}: ${(totals[user.id] / 100).toFixed(2)} ${currencyUnit}`}
                             </Typography>
                         ))}
                     </Stack>
                 </Paper>
             </Backdrop>
-        </div>
+        </>
     );
 };
 
-export default ItemiseExpense;
+export default AllocateItems;

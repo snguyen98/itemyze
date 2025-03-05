@@ -19,6 +19,7 @@ class ExpenseSerializer(serializers.ModelSerializer):
             'sync_status_label',
             'splitwise_id',
             'splitwise_group',
+            'splitwise_paid_by',
             'created_on',
             'last_modified'
         ]

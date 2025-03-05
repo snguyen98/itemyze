@@ -70,18 +70,16 @@ const ViewExpense = () => {
     }
 
     return (
-        <div className="content">
-             <Paper id="header" square={true}>
-                <Stack className="frame-content" direction="row" spacing={0}>
-                    <Button id="header-back" onClick={navHome}>
-                        <ArrowBackIosNewIcon />
-                    </Button>
-                    <Typography className="frame-content" id="title-text" variant="h4">Details</Typography>
-                    <Button id="header-edit" onClick={navEdit}>
-                        <EditIcon />
-                    </Button>
-                </Stack>
-            </Paper>
+        <>
+            <Stack className="frame-content" direction="row" spacing={0}>
+                <Button id="header-return" onClick={navHome}>
+                    <ArrowBackIosNewIcon />
+                </Button>
+                <Typography className="frame-content" id="title-text" variant="h4">Details</Typography>
+                <Button id="header-action" onClick={navEdit}>
+                    <EditIcon />
+                </Button>
+            </Stack>
             { expense !== undefined && (
                 <div>
                     <Typography id="title-text" variant="h4">{expense.name}</Typography>
@@ -92,7 +90,6 @@ const ViewExpense = () => {
                     <Typography>Group: {expense.splitwiseGroupName}</Typography>
                     <Divider />
                     <Stack direction="column">
-                        <Button onClick={navViewItems}>View Items</Button>
                         <Button onClick={navItemise}>Itemise</Button>
                     </Stack>
                 </div>
@@ -104,7 +101,7 @@ const ViewExpense = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-        </div>
+        </>
     );
 };
 

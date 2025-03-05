@@ -6,11 +6,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import Home from './pages/Home';
 import CreateExpense from './pages/CreateExpense';
-import ItemiseExpense from './pages/ItemiseExpense';
 import NotFound from './pages/NotFound';
 import ViewExpense from './pages/ViewExpense';
-import ViewItems from './pages/ViewItems';
 import EditExpense from './pages/EditExpense';
+import ItemiseWorkflow from './pages/ItemiseWorkflow';
 
 //import './styles/index.scss';
 
@@ -23,8 +22,7 @@ export default function App() {
           <Route path="create" element={<CreateExpense />} />
           <Route path="view" element={<ViewExpense />} />
           <Route path="edit" element={<EditExpense />} />
-          <Route path="items" element={<ViewItems />} />
-          <Route path="itemise" element={<ItemiseExpense />} />
+          <Route path="itemise" element={<ItemiseWorkflow />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

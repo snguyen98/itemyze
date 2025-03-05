@@ -1,0 +1,16 @@
+.avatar-display {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+#footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+}
+
+div.avatar-img {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}

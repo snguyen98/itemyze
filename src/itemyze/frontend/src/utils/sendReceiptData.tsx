@@ -18,7 +18,7 @@ async function sendReceiptData(expenseId: Number, file: File, currency: string) 
                 'Content-Type': 'multipart/form-data',
                 'X-CSRFToken': csrftoken
             }
-        })
+        });
 
         return res;
     }

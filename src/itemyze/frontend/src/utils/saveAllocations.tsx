@@ -18,7 +18,7 @@ async function saveAllocations(expenseId: number, allocations: Dict[]) {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrftoken
             }
-        })
+        });
 
         return res;
     }

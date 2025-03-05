@@ -29,6 +29,7 @@ class Expense(models.Model):
     )
     splitwise_id = models.IntegerField(null=True)
     splitwise_group = models.IntegerField(null=False)
+    splitwise_paid_by = models.IntegerField(null=False)
     created_on = models.DateField(auto_now_add=True)
     last_modified = models.DateField(auto_now=True)
     #created_by = models.ForeignKey(settings.AUTH_USER_MODEL)

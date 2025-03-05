@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from 'js-cookie';
 
-async function editExpense(expenseId: number, name: string, group: number, currency: string) {
+async function editExpense(expenseId: number, name: string, group: number, user: number, currency: string) {
     const csrftoken = Cookies.get('csrftoken');
     
     try {
@@ -11,7 +11,8 @@ async function editExpense(expenseId: number, name: string, group: number, curre
             data: {
                 name: name,
                 splitwise_group: group,
-                currency: currency
+                splitwise_paid_by: user,
+                currency: currency,
             },
             headers: {
                 'Content-Type': 'application/json',

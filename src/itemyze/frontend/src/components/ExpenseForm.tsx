@@ -1,4 +1,4 @@
-import { useForm, SubmitHandler, FieldValues, Path, DefaultValues } from 'react-hook-form';
+import { useForm, SubmitHandler, FieldValues, Path, DefaultValues, PathValue } from 'react-hook-form';
 import { useEffect, useState } from "react";
 
 import axios from "axios";
@@ -6,13 +6,18 @@ import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material
 import Input from "@mui/material/Input";
 
 import Dict from '../interfaces/Dict';
+import Group from '../interfaces/Group';
 
 import '../styles/ExpenseForm.scss';
+import User from '../interfaces/User';
 
 function ExpenseForm<T extends FieldValues>({onSubmit, defaultValues}: {onSubmit: SubmitHandler<T>, defaultValues?: DefaultValues<T>}) {
-    const [groups, setGroups] = useState<Dict[]>([]);
+    const [groups, setGroups] = useState<Group[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [currencies, setCurrencies] = useState<Dict[]>([]);
     const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<T>({ defaultValues });
+
+    const groupVal = watch("group" as Path<T>);
 
     useEffect(() => {
         axios
@@ -32,7 +37,7 @@ function ExpenseForm<T extends FieldValues>({onSubmit, defaultValues}: {onSubmit
     }, [defaultValues, reset]);
 
     useEffect(() => {
-        if (defaultValues && groups.length > 0 && currencies.length > 0) {
+        if (defaultValues && groups.length > 0 && currencies.length > 0 && users.length > 0) {
             (Object.entries(defaultValues) as [keyof T, T[keyof T]][]).forEach(([key, value]) => {
                 if (value !== undefined) {
                     setValue(key as Path<T>, value);
@@ -41,48 +46,73 @@ function ExpenseForm<T extends FieldValues>({onSubmit, defaultValues}: {onSubmit
         }
     }, [defaultValues, setValue, groups, currencies]);
 
+    useEffect(() => {
+        if (groupVal || groupVal === 0) {
+            const group = groups.find((g) => String(g.id) === String(groupVal)); // Match ID as string
+            setUsers(group ? group.members : []); // Update users based on the selected group
+            setValue("user" as Path<T>, "" as PathValue<T, Path<T>>); // Reset user selection when group changes
+        }
+      }, [groupVal, groups, setValue]);
+
+    useEffect(() => {
+        const group = groups.find((group) => Number(group.id) === Number(groupVal));
+        setUsers(group ? group.members : []); 
+    }, [groupVal, groups]);
+
     return (
-        <div className="content">
-            <div id="form-content">
-                <FormControl fullWidth className="form-item">
-                    <InputLabel required htmlFor="name-input">Name</InputLabel>
-                    <Input
-                        id="name-input"
-                        { ...register("name" as Path<T>, { required: true })}
-                        value={watch("name" as Path<T>) ?? ""}
-                    />
-                </FormControl>
-                <FormControl fullWidth className="form-item">
-                    <InputLabel required id="group-select-label">Splitwise Group</InputLabel>
-                    <Select
-                        labelId="group-select-label"
-                        { ...register("group" as Path<T>,{ required: true })}
-                        value={watch("group" as Path<T>) ?? ""}
-                    >
-                        { groups.map(group => (
-                            <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+        <div id="form-content">
+            <FormControl fullWidth className="form-item">
+                <InputLabel required htmlFor="name-input">Name</InputLabel>
+                <Input
+                    id="name-input"
+                    { ...register("name" as Path<T>, { required: true })}
+                    value={watch("name" as Path<T>) ?? ""}
+                />
+            </FormControl>
 
-                <FormControl fullWidth className="form-item">
-                    <InputLabel required id="currency-select-label">Currency</InputLabel>
-                    <Select
-                        labelId="currency-select-label"
-                        { ...register("currency" as Path<T>, { required: true })}
-                        value={watch("currency" as Path<T>) ?? ""}
-                    >
-                        { currencies.map(currency => (
-                            <MenuItem key={currency.currency_code} value={currency.currency_code}>{`${currency.currency_code} (${currency.unit})`}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+            <FormControl fullWidth className="form-item">
+                <InputLabel required id="group-select-label">Splitwise Group</InputLabel>
+                <Select
+                    labelId="group-select-label"
+                    { ...register("group" as Path<T>,{ required: true })}
+                    value={groupVal ?? ""}
+                >
+                    { groups.map(group => (
+                        <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
-                {(errors.name || errors.group || errors.currency) && <span id="validation-msg">
-                    Please check the required fields
-                </span>}
-                <Button className="form-item" fullWidth variant="contained" onClick={handleSubmit(onSubmit)}>Submit</Button>
-            </div>
+            <FormControl fullWidth className="form-item">
+                <InputLabel required id="user-select-label">Paid By</InputLabel>
+                <Select
+                    labelId="user-select-label"
+                    { ...register("user" as Path<T>,{ required: true })}
+                    value={watch("user" as Path<T>) ?? ""}
+                >
+                    { users.map(user => (
+                        <MenuItem key={user.id} value={user.id}>{`${user.fname} ${user.lname}`}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl fullWidth className="form-item">
+                <InputLabel required id="currency-select-label">Currency</InputLabel>
+                <Select
+                    labelId="currency-select-label"
+                    { ...register("currency" as Path<T>, { required: true })}
+                    value={watch("currency" as Path<T>) ?? ""}
+                >
+                    { currencies.map(currency => (
+                        <MenuItem key={currency.currency_code} value={currency.currency_code}>{`${currency.currency_code} (${currency.unit})`}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            {(errors.name || errors.group || errors.currency) && <span id="validation-msg">
+                Please check the required fields
+            </span>}
+            <Button className="form-item" fullWidth variant="contained" onClick={handleSubmit(onSubmit)}>Submit</Button>
         </div>
     );
 };

@@ -16,7 +16,7 @@ function UploadReceipt({onUpload}: {onUpload: (receipt: File) => void}) {
           }}
         />
         <label htmlFor="file-input">
-          <Button variant="text" component="span">
+          <Button variant="contained" component="span">
             Upload
           </Button>
       </label>

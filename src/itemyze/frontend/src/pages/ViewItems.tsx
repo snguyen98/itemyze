@@ -1,37 +1,32 @@
-import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-import Expense from "../interfaces/Expense";
-import getExpense from "../utils/getExpense";
-import Paper from '@mui/material/Paper';
+import Item from "../interfaces/Item";
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
-import { Alert, Backdrop, CircularProgress, Stack } from "@mui/material";
+import { Backdrop, CircularProgress, Stack } from "@mui/material";
 import ItemList from "../components/ItemList";
-import UploadReceipt from "../components/UploadReceipt";
 import { Button } from "@mui/material";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
-import getCurrencyUnit from "../utils/getCurrencyUnit";
-import sendReceiptData from "../utils/sendReceiptData";
-import Item from "../interfaces/Item";
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import editItem from "../utils/editItem";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import '../styles/ViewItems.scss';
 
-const ViewItems = () => {
-    const search = useLocation().search;
-    const navigate = useNavigate();
-    const expenseId = Number(new URLSearchParams(search).get("expenseId"));
-    const [expense, setExpense] = useState<Expense>();
-    const [currency, setCurrency] = useState<string>("");
+interface ViewItemsProps {
+    items: Item[];
+    currencyUnit: string;
+    handleEditCompletion: () => void;
+    onClose: () => void;
+    onSave: () => void;
+    handleErr: (msg: string) => void;
+}
 
+const ViewItems = ({items, currencyUnit, handleEditCompletion, onClose, onSave, handleErr}: ViewItemsProps) => {
     const [dialogState, setDialogState] = useState<{ 
         open: boolean;
         itemId: null | number;
@@ -41,13 +36,6 @@ const ViewItems = () => {
     });
 
     const [loadingOpen, setLoadingOpen] = useState<boolean>(true);
-    const [errState, setErrState] = useState<{ 
-        open: boolean;
-        msg: string;
-    }>({
-        open: false,
-        msg: ""
-    });
 
     const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Inputs>();
 
@@ -72,21 +60,6 @@ const ViewItems = () => {
         });
     };
 
-    const handleErrClose = (
-        _: React.SyntheticEvent | Event,
-        reason?: SnackbarCloseReason,
-    ) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-        else {
-            setErrState((prevState) => ({
-                ...prevState,
-                open: false
-            }));
-        }
-    };
-
     type Inputs = {
         itemId: number,
         name: string,
@@ -95,7 +68,7 @@ const ViewItems = () => {
 
     useEffect(() => {
         setLoadingOpen(false);
-    }, [expense]);
+    }, [items]);
 
     const onSubmit: SubmitHandler<Inputs> = async(data: Inputs) => {
         if (dialogState.itemId) {
@@ -105,82 +78,30 @@ const ViewItems = () => {
             await editItem(item)
                 .then(async res => {
                     if (res && res.status === 200) {
-                        retrieveExpenseInfo();
+                        handleEditCompletion();
                     }
                     else {
-                        setErrState({
-                            open: true,
-                            msg: "Could not update item. Please try again."
-                        });
-
+                        handleErr("Could not update item. Please try again.");
                         setLoadingOpen(false);
                     }
                 });
         }
     }
 
-    useEffect(() => {
-        retrieveExpenseInfo()
-    }, [expenseId]);
-        
-    useEffect(() => {
-        if (expense !== undefined) {
-            getCurrencyUnit(expense.currency)
-                .then(res => {
-                    setCurrency(res.data.data);
-                });
-        }
-    }, [expense]);
-
-    const retrieveExpenseInfo = () => {
-        if (expenseId !== undefined && expenseId > 0) {
-            getExpense(expenseId, true, false)
-                .then(res => {
-                    setExpense(res);
-                });
-        }
-    }
-
-    const receiptUpload = (receipt: File) => {
-        if (receipt !== undefined && currency !== null && currency !== "") {
-            sendReceiptData(expenseId, receipt, currency)
-                .then(() => {
-                    retrieveExpenseInfo();
-                });
-        }
-    }
-
-    const navView = () => {
-        if (expenseId !== undefined) {
-            navigate({
-                pathname: "/view",
-                search: `?expenseId=${expenseId}`
-            });
-        }
-    }
-
     return (
         <div className="content">
-             <Paper id="header" square={true}>
+            <Stack id="header" direction="column" spacing={0}>
                 <Stack className="frame-content" direction="row" spacing={0}>
-                    <Button id="header-back" onClick={navView}>
-                        <ArrowBackIosNewIcon />
-                    </Button>
-                    <Typography className="frame-content" id="title-text" variant="h4">Items</Typography>
-                    { expense !== undefined && currency !== null && currency !== "" && (
-                        <UploadReceipt onUpload={receiptUpload} />
-                    )}
+                    <IconButton id="header-return" onClick={onClose}>
+                        <CloseIcon />
+                    </IconButton>
+                    <Button id="header-action" variant="text" onClick={onSave}>Save</Button>
                 </Stack>
-            </Paper>
-            { expense !== undefined && (
-                <div>
-                    { expense.items && expense.items.length > 0 && currency && currency !== "" ? (
-                        <ItemList items={expense.items} currency={currency} onItemSelect={handleItemSelect} />
-                    ) : (
-                        <Typography>No items to display</Typography>
-                    )}
-                    
-                </div>
+            </Stack>
+            { items !== undefined && items.length > 0 && currencyUnit !== undefined ? (
+                <ItemList items={items} currency={currencyUnit} onItemSelect={handleItemSelect} />
+            ) : (
+                <Typography>No items to display</Typography>
             )}
             <Dialog open={dialogState.open} onClose={handleDialogClose}>
                 <DialogTitle>Edit Item</DialogTitle>
@@ -226,16 +147,6 @@ const ViewItems = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-
-            <Snackbar open={errState.open} onClose={handleErrClose}>
-                <Alert
-                    onClose={handleErrClose}
-                    severity="error"
-                    variant="filled"
-                >
-                    {errState.msg}
-                </Alert>
-            </Snackbar>
         </div>
     );
 };
