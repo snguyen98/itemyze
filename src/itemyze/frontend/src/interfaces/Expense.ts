@@ -14,9 +14,7 @@ interface Expense {
     splitwiseGroup: number,
     splitwiseGroupName: string,
     splitwisePaidBy: number,
-    members?: User[],
     createdBy?: User,
-    items?: Item[]
 }
 
 export default Expense;
