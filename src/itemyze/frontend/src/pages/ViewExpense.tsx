@@ -38,15 +38,6 @@ const ViewExpense = () => {
         }
     }
 
-    const navViewItems = () => {
-        if (expenseId !== undefined) {
-            navigate({
-                pathname: "/items",
-                search: `?expenseId=${expenseId}`
-            });
-        }
-    }
-
     const navItemise = () => {
         if (expenseId !== undefined) {
             navigate({

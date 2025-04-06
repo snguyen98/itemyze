@@ -2,7 +2,7 @@ import { useForm, SubmitHandler, FieldValues, Path, DefaultValues, PathValue } f
 import { useEffect, useState } from "react";
 
 import axios from "axios";
-import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
 import Input from "@mui/material/Input";
 
 import Dict from '../interfaces/Dict';
@@ -61,57 +61,57 @@ function ExpenseForm<T extends FieldValues>({onSubmit, defaultValues}: {onSubmit
 
     return (
         <div id="form-content">
-            <FormControl fullWidth className="form-item">
+            <FormControl fullWidth className="form-item" error={!!errors.name}>
                 <InputLabel required htmlFor="name-input">Name</InputLabel>
                 <Input
                     id="name-input"
-                    { ...register("name" as Path<T>, { required: true })}
+                    { ...register("name" as Path<T>, { required: "Name is required" })}
                     value={watch("name" as Path<T>) ?? ""}
                 />
+                {errors.name && <FormHelperText>{String(errors.name?.message || "")}</FormHelperText>}
             </FormControl>
 
-            <FormControl fullWidth className="form-item">
+            <FormControl fullWidth className="form-item" error={!!errors.group}>
                 <InputLabel required id="group-select-label">Splitwise Group</InputLabel>
                 <Select
                     labelId="group-select-label"
-                    { ...register("group" as Path<T>,{ required: true })}
+                    { ...register("group" as Path<T>,{ required: "Splitwise group is required" })}
                     value={groupVal ?? ""}
                 >
                     { groups.map(group => (
                         <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
                     ))}
                 </Select>
+                {errors.group && <FormHelperText>{String(errors.group?.message || "")}</FormHelperText>}
             </FormControl>
 
-            <FormControl fullWidth className="form-item">
+            <FormControl fullWidth className="form-item" error={!!errors.user}>
                 <InputLabel required id="user-select-label">Paid By</InputLabel>
                 <Select
                     labelId="user-select-label"
-                    { ...register("user" as Path<T>,{ required: true })}
+                    { ...register("user" as Path<T>,{ required: "Paid by user is required" })}
                     value={watch("user" as Path<T>) ?? ""}
                 >
                     { users.map(user => (
                         <MenuItem key={user.id} value={user.id}>{`${user.fname} ${user.lname}`}</MenuItem>
                     ))}
                 </Select>
+                {errors.user && <FormHelperText>{String(errors.user?.message || "")}</FormHelperText>}
             </FormControl>
 
-            <FormControl fullWidth className="form-item">
+            <FormControl fullWidth className="form-item" error={!!errors.currency}>
                 <InputLabel required id="currency-select-label">Currency</InputLabel>
                 <Select
                     labelId="currency-select-label"
-                    { ...register("currency" as Path<T>, { required: true })}
+                    { ...register("currency" as Path<T>, { required: "Currency is required" })}
                     value={watch("currency" as Path<T>) ?? ""}
                 >
                     { currencies.map(currency => (
                         <MenuItem key={currency.currency_code} value={currency.currency_code}>{`${currency.currency_code} (${currency.unit})`}</MenuItem>
                     ))}
                 </Select>
+                {errors.currency && <FormHelperText>{String(errors.currency?.message || "")}</FormHelperText>}
             </FormControl>
-
-            {(errors.name || errors.group || errors.currency) && <span id="validation-msg">
-                Please check the required fields
-            </span>}
             <Button className="form-item" fullWidth variant="contained" onClick={handleSubmit(onSubmit)}>Submit</Button>
         </div>
     );

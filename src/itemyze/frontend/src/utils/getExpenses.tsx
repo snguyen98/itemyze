@@ -10,7 +10,7 @@ async function getExpenses() {
 
     try {
         const res = await axios
-            .get('/api/expenses')
+            .get('/api/expenses/')
             .then(axiosResp => {
                 return axiosResp.data.map(camelize);
             })

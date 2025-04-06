@@ -3,7 +3,7 @@ import axios from "axios";
 async function getCurrencyUnit(currencyCode: string) {
     try {
         const res = await axios
-            .get('/api/get_currency_unit', {
+            .get('/api/get_currency_unit/', {
                 params: {
                     currency_code: currencyCode
                 }

@@ -3,7 +3,7 @@ import axios from "axios";
 async function getItems(expenseId: number) {
     try {
         const res = await axios
-            .get(`/api/items`, {
+            .get(`/api/items/`, {
                 params: {
                     expenseId
                 }

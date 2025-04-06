@@ -10,7 +10,7 @@ async function getAllocations(expenseId: number) {
 
     try {
         const res = await axios
-            .get('/api/allocations', {
+            .get('/api/allocations/', {
                 params: {
                     expenseId
                 }

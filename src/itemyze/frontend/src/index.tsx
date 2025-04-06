@@ -10,23 +10,31 @@ import NotFound from './pages/NotFound';
 import ViewExpense from './pages/ViewExpense';
 import EditExpense from './pages/EditExpense';
 import ItemiseWorkflow from './pages/ItemiseWorkflow';
+import Login from './pages/auth/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
 
 //import './styles/index.scss';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/">
-          <Route path="create" element={<CreateExpense />} />
-          <Route path="view" element={<ViewExpense />} />
-          <Route path="edit" element={<EditExpense />} />
-          <Route path="itemise" element={<ItemiseWorkflow />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/create" element={<CreateExpense />} />
+            <Route path="/view" element={<ViewExpense />} />
+            <Route path="/edit" element={<EditExpense />} />
+            <Route path="/itemise" element={<ItemiseWorkflow />} />
+          </Route>
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
