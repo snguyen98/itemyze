@@ -1,11 +1,9 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import Expense from "../interfaces/Expense";
 import getExpense from "../utils/getExpense";
 import Divider from '@mui/material/Divider';
-import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { Backdrop, CircularProgress, Stack } from "@mui/material";
 import { Button } from "@mui/material";
@@ -75,12 +73,12 @@ const ViewExpense = () => {
                 <div id="view-content">
                     <Typography className="view-item" id="title-text" variant="h4">{expense.name}</Typography>
                     <Typography className="view-item" variant="h6">Currency: {expense.currency}</Typography>
-                    <Divider />
+                    <Divider className="view-item" />
                     <Typography className="view-item" variant="h6">Splitwise</Typography>
                     <Typography className="view-item" >Expense: {expense.splitwiseId}</Typography>
                     <Typography className="view-item" >Paid By: {expense.splitwisePaidBy}</Typography>
                     <Typography className="view-item" >Group: {expense.splitwiseGroupName}</Typography>
-                    <Divider />
+                    <Divider className="view-item" />
                     <Stack className="view-item"  direction="column">
                         <Button onClick={navItemise}>Itemise</Button>
                     </Stack>

@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
-import { useTheme } from '@mui/material/styles'
-import { SubmitHandler } from 'react-hook-form';
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -14,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 import UploadReceipt from "../components/UploadReceipt";
 import ItemOverlay from "../components/ItemOverlay";
@@ -35,6 +34,7 @@ import uploadSplitwise from '../utils/uploadSplitwise';
 
 const ItemiseWorkflow = () => {
     const search = useLocation().search;
+    const navigate = useNavigate();
     const expenseId = Number(new URLSearchParams(search).get("expenseId"));
     const [expense, setExpense] = useState<Expense>();
     const [items, setItems] = useState<Item[]>([]);
@@ -335,10 +335,25 @@ const ItemiseWorkflow = () => {
             default:
                 return <NotFound />;
         }
-    };
+    }
+
+    const navView = () => {
+        if (expenseId !== undefined) {
+            navigate({
+                pathname: "/view",
+                search: `?expenseId=${expenseId}`
+            });
+        }
+    }
 
     return (
         <>
+            <Stack className="frame-content" direction="row" spacing={0}>
+                <Button id="header-return" onClick={navView}>
+                    <ArrowBackIosNewIcon />
+                </Button>
+                <Typography className="frame-content" id="title-text" variant="h4">Itemise</Typography>
+            </Stack>
             <Box id="workflow-content">
               <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((step, index) => (
