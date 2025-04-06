@@ -11,6 +11,8 @@ import Button from "@mui/material/Button";
 import { login } from "../../services/authService";
 import { useAuth } from '../../context/AuthContext';
 
+import '../../styles/Form.scss';
+
 function Login() {
     const navigate = useNavigate();
     const { isAuthenticated, isLoading } = useAuth();
@@ -41,7 +43,7 @@ function Login() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form id="form-content" onSubmit={handleSubmit(onSubmit)}>
             <FormControl fullWidth className="form-item" error={!!errors.username}>
                 <InputLabel required htmlFor="username-input">Username</InputLabel>
                 <Input

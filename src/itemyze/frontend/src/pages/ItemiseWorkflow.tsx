@@ -31,7 +31,6 @@ import getGroupMembers from '../utils/getGroupMembers';
 import User from '../interfaces/User';
 
 import '../styles/ItemiseWorkflow.scss';
-import SplitwiseForm from '../components/SplitwiseForm';
 import uploadSplitwise from '../utils/uploadSplitwise';
 
 const ItemiseWorkflow = () => {
@@ -340,7 +339,7 @@ const ItemiseWorkflow = () => {
 
     return (
         <>
-            <Box>
+            <Box id="workflow-content">
               <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((step, index) => (
                     <Step key={step.label}>

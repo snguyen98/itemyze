@@ -72,15 +72,15 @@ const ViewExpense = () => {
                 </Button>
             </Stack>
             { expense !== undefined && (
-                <div>
-                    <Typography id="title-text" variant="h4">{expense.name}</Typography>
-                    <Typography variant="h6">Currency: {expense.currency}</Typography>
+                <div id="view-content">
+                    <Typography className="view-item" id="title-text" variant="h4">{expense.name}</Typography>
+                    <Typography className="view-item" variant="h6">Currency: {expense.currency}</Typography>
                     <Divider />
-                    <Typography variant="h6">Splitwise</Typography>
-                    <Typography>Expense: {expense.splitwiseId}</Typography>
-                    <Typography>Group: {expense.splitwiseGroupName}</Typography>
+                    <Typography className="view-item" variant="h6">Splitwise</Typography>
+                    <Typography className="view-item" >Expense: {expense.splitwiseId}</Typography>
+                    <Typography className="view-item" >Group: {expense.splitwiseGroupName}</Typography>
                     <Divider />
-                    <Stack direction="column">
+                    <Stack className="view-item"  direction="column">
                         <Button onClick={navItemise}>Itemise</Button>
                     </Stack>
                 </div>

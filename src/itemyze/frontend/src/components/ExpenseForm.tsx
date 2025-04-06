@@ -8,7 +8,7 @@ import Input from "@mui/material/Input";
 import Dict from '../interfaces/Dict';
 import Group from '../interfaces/Group';
 
-import '../styles/ExpenseForm.scss';
+import '../styles/Form.scss';
 import User from '../interfaces/User';
 
 function ExpenseForm<T extends FieldValues>({onSubmit, defaultValues}: {onSubmit: SubmitHandler<T>, defaultValues?: DefaultValues<T>}) {
