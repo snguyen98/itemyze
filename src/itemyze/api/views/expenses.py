@@ -153,13 +153,21 @@ def upload_splitwise(_, id=None):
         payload[f"users__{index}__paid_share"] = payload["cost"] if val.splitwise_user == expense.splitwise_paid_by else 0
 
     if expense.splitwise_id:
-        res = update_expense(id=id, payload=payload)
+        res = update_expense(id=expense.splitwise_id, payload=payload)
 
     else:
         res = create_expense(payload=payload)
 
     if not res["errors"]:
-        return Response({"message": f"Expense data sent to splitwise: {res["expenses"][0]["id"]}"}, status=status.HTTP_200_OK)
-    
+        splitwise_id = res["expenses"][0]["id"]
+        expense.splitwise_id = splitwise_id
+        expense.sync_status = Expense.SyncStatus.SYNCED
+        expense.save()
+
+        return Response({"message": f"Expense data sent to splitwise: {splitwise_id}"}, status=status.HTTP_200_OK)
+ 
     else:
+        expense.sync_status = Expense.SyncStatus.ERROR
+        expense.save()
+
         return Response({"error": res["errors"]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

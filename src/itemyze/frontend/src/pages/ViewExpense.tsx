@@ -78,6 +78,7 @@ const ViewExpense = () => {
                     <Divider />
                     <Typography className="view-item" variant="h6">Splitwise</Typography>
                     <Typography className="view-item" >Expense: {expense.splitwiseId}</Typography>
+                    <Typography className="view-item" >Paid By: {expense.splitwisePaidBy}</Typography>
                     <Typography className="view-item" >Group: {expense.splitwiseGroupName}</Typography>
                     <Divider />
                     <Stack className="view-item"  direction="column">

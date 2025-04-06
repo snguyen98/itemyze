@@ -74,7 +74,7 @@ def update_expense(id: int, payload: dict):
     session = get_oauth_session()
 
     res = session.post(
-        url = f'https://secure.splitwise.com/api/v3.0/update_expense/{id}',
+        url = f'https://secure.splitwise.com/api/v3.0/update_expense/{id}/',
         data=payload
     )
 
