@@ -129,10 +129,6 @@ const ItemiseWorkflow = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
     const handleStep = (step: number) => () => {
         setActiveStep(step);
     };
@@ -185,19 +181,18 @@ const ItemiseWorkflow = () => {
         }
     }
 
-    type Inputs = {
-        user: string,
-    };
-
     const sendToSplitwise = () => {
         if (validateAllocations()) {
             uploadSplitwise(expenseId)
                 .then(res => {
-                    if (res.statusCode !== 200) {
-                        console.log("Error");
+                    if (res.status !== 200) {
+                        displayErr("An error occurred when sending data to splitwise")
                     }
                     else {
                         handleNext();
+                        setTimeout(() => {
+                            navView();
+                        }, 2000);
                     }
                 });
         }
@@ -373,7 +368,7 @@ const ItemiseWorkflow = () => {
               </Stepper>
               {activeStep === steps.length && (
                 <Paper square elevation={0} sx={{ p: 3 }}>
-                  <Typography>Expense uploaded to Splitwise</Typography>
+                  <Typography>Expense uploaded to Splitwise. Redirecting to expense page...</Typography>
                 </Paper>
               )}
             </Box>
