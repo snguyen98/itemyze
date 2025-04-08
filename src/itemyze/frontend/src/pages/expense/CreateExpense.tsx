@@ -1,8 +1,8 @@
 import { SubmitHandler } from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
 
-import createExpense from "../utils/createExpense";
-import ExpenseForm from '../components/ExpenseForm';
+import { createExpense } from "../../services/expenseService";
+import ExpenseForm from '../../components/ExpenseForm';
 
 const CreateExpense = () => {
     const navigate = useNavigate();
@@ -17,10 +17,10 @@ const CreateExpense = () => {
     const onSubmit: SubmitHandler<Inputs> = async(data: Inputs) => {
         await createExpense(data.name, Number(data.group), Number(data.user), data.currency)
             .then(res => {
-                if (res.data.id !== undefined) {
+                if (res.id !== undefined) {
                     navigate({
                         pathname: "/view",
-                        search: `?expenseId=${res.data.id}`
+                        search: `?expenseId=${res.id}`
                     });
                 }
             });

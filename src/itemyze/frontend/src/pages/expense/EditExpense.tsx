@@ -2,11 +2,10 @@ import { SubmitHandler } from 'react-hook-form';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import editExpense from "../utils/editExpense";
-import getExpense from "../utils/getExpense";
+import { editExpense, getExpense } from "../../services/expenseService";
 
-import Expense from "../interfaces/Expense";
-import ExpenseForm from '../components/ExpenseForm';
+import Expense from "../../interfaces/Expense";
+import ExpenseForm from '../../components/ExpenseForm';
 
 const EditExpense = () => {
     const search = useLocation().search;
@@ -37,10 +36,10 @@ const EditExpense = () => {
     const onSubmit: SubmitHandler<Inputs> = async(data: Inputs) => {
         await editExpense(expenseId, data.name, Number(data.group), Number(data.user), data.currency)
             .then(res => {
-                if (res.data.id !== undefined) {
+                if (res.id !== undefined) {
                     navigate({
                         pathname: "/view",
-                        search: `?expenseId=${res.data.id}`
+                        search: `?expenseId=${res.id}`
                     });
                 }
             });

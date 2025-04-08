@@ -13,16 +13,16 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
-import Item from "../interfaces/Item";
-import User from "../interfaces/User";
-import Allocation from "../interfaces/Allocation";
-import AllocationList from "../components/AllocationList";
+import Item from "../../interfaces/Item";
+import User from "../../interfaces/User";
+import Allocation from "../../interfaces/Allocation";
+import AllocationList from "../../components/AllocationList";
 
-import saveAllocations from "../utils/saveAllocations";
-import Dict from "../interfaces/Dict";
+import { saveAllocations } from "../../services/allocationService";
+import Dict from "../../interfaces/Dict";
 import Button from "@mui/material/Button";
 
-import '../styles/AllocateItems.scss';
+import '../../styles/AllocateItems.scss';
 
 interface AllocateItemsProps {
     expenseId: number;
@@ -125,23 +125,18 @@ const AllocateItems = ({expenseId, items, users, currencyUnit, onClose, onSave, 
         setShowTotals(false);
     }
 
-    const saveItemisation = () => {
+    const saveItemisation = async() => {
         if (calcRemaining() == 0) {
             const allocations = users.map(user => ({
                 "user": String(user.id),
                 "amount": (totals[user.id] / 100).toFixed(2)
             })) as Dict[];
 
-            const resPromise = saveAllocations(expenseId, allocations);
-
-            resPromise.then((res) => {
-                if (res.status !== 200) {
+            await saveAllocations(expenseId, allocations)
+                .then(() => onSave())
+                .catch(() => 
                     handleErr("An error occurred when saving. Please try again.")
-                }
-                else {
-                    onSave();
-                }
-            });
+                );
         }
         else {
             handleErr("Please itemise the remaining items");

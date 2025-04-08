@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import Item from "../interfaces/Item";
+import Item from "../../interfaces/Item";
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -8,14 +8,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { Backdrop, CircularProgress, Stack } from "@mui/material";
-import ItemList from "../components/ItemList";
+import ItemList from "../../components/ItemList";
 import { Button } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import editItem from "../utils/editItem";
+import { editItem } from "../../services/itemService";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import '../styles/ViewItems.scss';
+import '../../styles/ViewItems.scss';
 
 interface ViewItemsProps {
     items: Item[];
@@ -76,14 +76,12 @@ const ViewItems = ({items, currencyUnit, handleEditCompletion, onClose, onSave, 
             handleDialogClose();
             setLoadingOpen(true);
             await editItem(item)
-                .then(async res => {
-                    if (res && res.status === 200) {
-                        handleEditCompletion();
-                    }
-                    else {
-                        handleErr("Could not update item. Please try again.");
-                        setLoadingOpen(false);
-                    }
+                .then(async () => {
+                    handleEditCompletion();
+                })
+                .catch(() => {
+                    handleErr("Could not update item. Please try again.");
+                    setLoadingOpen(false);
                 });
         }
     }

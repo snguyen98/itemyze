@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import Expense from "../interfaces/Expense";
-import getExpense from "../utils/getExpense";
+import Expense from "../../interfaces/Expense";
+import { getExpense } from '../../services/expenseService';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { Backdrop, CircularProgress, Stack } from "@mui/material";
@@ -10,7 +10,7 @@ import { Button } from "@mui/material";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import EditIcon from '@mui/icons-material/Edit';
 
-import '../styles/ViewExpense.scss';
+import '../../styles/ViewExpense.scss';
 
 const ViewExpense = () => {
     const search = useLocation().search;

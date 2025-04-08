@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import '../styles/Home.scss';
-import getExpenses from '../utils/getExpenses';
+import { getExpenses } from '../services/expenseService';
 import Expense from '../interfaces/Expense';
 
 const Home = () => {

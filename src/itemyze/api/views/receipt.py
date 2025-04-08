@@ -2,19 +2,17 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.http import JsonResponse
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 from os import path, remove
 
 from ..models import Expense, Item
-from ..tools.splitwise import get_sw_currencies, get_sw_currency_unit
 from ..tools.tesseract import apply_ocr
 
 @api_view(['POST'])
 def process_receipt(request):
-    expense_id = request.POST.get("expense_id")
+    expense_id = request.POST.get("expenseId")
     currency = request.POST.get("currency")
     img = request.FILES.get("receipt")
     folder = path.join(settings.BASE_DIR, "data/temp")
@@ -49,16 +47,5 @@ def process_receipt(request):
 
     expense.receipt_status = Expense.ReceiptStatus.PROCESSED
     expense.save()
+
     return Response({"message": f"Receipt data added to expense with ID {expense_id}"}, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def get_currencies(_):
-    return Response(get_sw_currencies(), status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-def get_currency_unit(request):
-    currency_code = request.GET.get("currency_code")
-    unit = get_sw_currency_unit(currency_code=currency_code)
-
-    return Response({"data": unit}, status=status.HTTP_200_OK)

@@ -3,14 +3,14 @@ import { refreshInProgress } from '../context/AuthContext';
 
 // Add auth-specific interceptor
 authClient.interceptors.response.use(
-    (response) => response,
+    (res) => res,
     async (error) => {
         const originalRequest = error.config;
 
         // If error is 401 and we haven't already tried to refresh
         // AND the request is not to auth endpoints
         if (
-            error.response?.status === 401 && 
+            error.res?.status === 401 && 
             !originalRequest._retry &&
             !refreshInProgress.current &&
             !originalRequest.url.includes('/login/') &&
@@ -50,13 +50,13 @@ export const login = async (username: string, password: string) => {
     await fetchCSRFToken();
 
     try {
-        const response = await authClient.post('/login/', { username, password });
+        const res = await authClient.post('/login/', { username, password });
 
         // Check for successful login status
-        if (response.status === 200) {
-            return response.data;
+        if (res.status === 200) {
+            return res.data;
         } else {
-            throw new Error(response.data.details);
+            throw new Error(res.data.details);
         }
     } catch (error) {
         console.error('Login error:', error);
@@ -68,8 +68,8 @@ export const login = async (username: string, password: string) => {
 export const refreshToken = async () => {
     try {
         // The actual refresh token is in the cookie, not sent in request body
-        const response = await authClient.post('/refresh/');
-        return response.data;
+        const res = await authClient.post('/refresh/');
+        return res.data;
     } catch (error) {
         console.error('Token refresh error:', error);
         throw error;
@@ -79,8 +79,8 @@ export const refreshToken = async () => {
 // Check auth status
 export const checkAuthStatus = async () => {
     try {
-        const response = await authClient.post('/verify/');
-        return response.data;
+        const res = await authClient.post('/verify/');
+        return res.data;
     } catch (error) {
         throw error;
     }
@@ -91,8 +91,8 @@ export const logout = async () => {
     await fetchCSRFToken();
 
     try {
-        const response = await authClient.post('/logout/');
-        return response.data;
+        const res = await authClient.post('/logout/');
+        return res.data;
     } catch (error) {
         console.error('Logout error:', error);
         throw error;
@@ -104,8 +104,8 @@ export const logoutAll = async () => {
     await fetchCSRFToken();
 
     try {
-        const response = await authClient.post('/logout-all/');
-        return response.data;
+        const res = await authClient.post('/logout-all/');
+        return res.data;
     } catch (error) {
         console.error('Logout all error:', error);
         throw error;

@@ -5,11 +5,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import Home from './pages/Home';
-import CreateExpense from './pages/CreateExpense';
+import CreateExpense from './pages/expense/CreateExpense';
 import NotFound from './pages/NotFound';
-import ViewExpense from './pages/ViewExpense';
-import EditExpense from './pages/EditExpense';
-import ItemiseWorkflow from './pages/ItemiseWorkflow';
+import ViewExpense from './pages/expense/ViewExpense';
+import EditExpense from './pages/expense/EditExpense';
+import ItemiseWorkflow from './pages/expense/ItemiseWorkflow';
 import Login from './pages/auth/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';

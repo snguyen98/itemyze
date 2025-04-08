@@ -14,23 +14,25 @@ import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-import UploadReceipt from "../components/UploadReceipt";
-import ItemOverlay from "../components/ItemOverlay";
-import ViewItems from "../pages/ViewItems";
+import UploadReceipt from "../../components/UploadReceipt";
+import ItemOverlay from "../../components/ItemOverlay";
+import ViewItems from "./ViewItems";
 import AllocateItems from "./AllocateItems";
-import NotFound from "../pages/NotFound";
-import Expense from '../interfaces/Expense';
-import Item from '../interfaces/Item';
-import Allocation from '../interfaces/Allocation';
-import getExpense from '../utils/getExpense';
-import getItems from '../utils/getItems';
-import getAllocations from '../utils/getAllocations';
-import sendReceiptData from '../utils/sendReceiptData';
-import getGroupMembers from '../utils/getGroupMembers';
-import User from '../interfaces/User';
+import NotFound from "../NotFound";
 
-import '../styles/ItemiseWorkflow.scss';
-import uploadSplitwise from '../utils/uploadSplitwise';
+import { getExpense } from '../../services/expenseService';
+import { getItems } from '../../services/itemService';
+import { getAllocations } from '../../services/allocationService';
+import { sendReceiptData } from '../../services/receiptService';
+import { getGroupMembers } from '../../services/groupService';
+import { uploadSplitwise } from '../../services/splitwiseService';
+
+import Expense from '../../interfaces/Expense';
+import Item from '../../interfaces/Item';
+import Allocation from '../../interfaces/Allocation';
+import User from '../../interfaces/User';
+
+import '../../styles/ItemiseWorkflow.scss';
 
 const ItemiseWorkflow = () => {
     const search = useLocation().search;
@@ -163,37 +165,33 @@ const ItemiseWorkflow = () => {
         }
     };
 
-    const receiptUpload = (receipt: File) => {
+    const receiptUpload = async(receipt: File) => {
         if (expense !== undefined && receipt !== undefined && expense.currencyUnit !== undefined && expense.currencyUnit !== "") {
-            sendReceiptData(expenseId, receipt, expense.currencyUnit)
-                .then((res) => {
-                    if (res.status !== 200) {
-                        setErrState({
-                            open: true,
-                            msg: "There was an error processing the receipt, please try again."
+            await sendReceiptData(expenseId, receipt, expense.currencyUnit)
+                .then(() => {
+                    retrieveItems();
+                    handleNext();
+                })
+                .catch(() => {
+                    setErrState({
+                        open: true,
+                        msg: "There was an error processing the receipt, please try again."
                     });
-                    }
-                    else {
-                        retrieveItems();
-                        handleNext();
-                    }
                 });
         }
     }
 
-    const sendToSplitwise = () => {
+    const sendToSplitwise = async() => {
         if (validateAllocations()) {
-            uploadSplitwise(expenseId)
-                .then(res => {
-                    if (res.status !== 200) {
-                        displayErr("An error occurred when sending data to splitwise")
-                    }
-                    else {
-                        handleNext();
-                        setTimeout(() => {
-                            navView();
-                        }, 2000);
-                    }
+            await uploadSplitwise(expenseId)
+                .then(() => {
+                    handleNext();
+                    setTimeout(() => {
+                        navView();
+                    }, 2000);
+                })
+                .catch (() => {
+                    displayErr("An error occurred when sending data to splitwise");
                 });
         }
     }
