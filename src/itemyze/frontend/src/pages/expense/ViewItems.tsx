@@ -12,7 +12,7 @@ import ItemList from "../../components/ItemList";
 import { Button } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { editItem } from "../../services/itemService";
+import { deleteItem, editItem } from "../../services/itemService";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import '../../styles/ViewItems.scss';
@@ -52,6 +52,19 @@ const ViewItems = ({items, currencyUnit, handleEditCompletion, onClose, onSave, 
             setValue("cost", String(item.cost));
         }
     };
+
+    const handleItemDelete = async(item: Item) => {
+        if (item !== undefined) {
+            await deleteItem(item)
+                .then(async () => {
+                    handleEditCompletion();
+                })
+                .catch(() => {
+                    handleErr("Could not delete item. Please try again.");
+                    setLoadingOpen(false);
+                });
+        }
+    }
 
     const handleDialogClose = () => {
         setDialogState({
@@ -97,7 +110,12 @@ const ViewItems = ({items, currencyUnit, handleEditCompletion, onClose, onSave, 
                 </Stack>
             </Stack>
             { items !== undefined && items.length > 0 && currencyUnit !== undefined ? (
-                <ItemList items={items} currency={currencyUnit} onItemSelect={handleItemSelect} />
+                <ItemList 
+                    items={items} 
+                    currency={currencyUnit} 
+                    onItemSelect={handleItemSelect}
+                    onItemDelete={handleItemDelete}
+                />
             ) : (
                 <Typography>No items to display</Typography>
             )}

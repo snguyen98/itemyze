@@ -46,7 +46,7 @@ export const deleteItem = async (item: Item): Promise<Item> => {
         return res.data;
 
     } catch (error) {
-        console.error('Item edit:', error);
+        console.error('Item delete:', error);
         throw error;
     }
 }

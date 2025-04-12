@@ -17,9 +17,10 @@ interface AllocateItemsProps {
     items: Item[];
     currency: string;
     onItemSelect: (item: Item) => void;
+    onItemDelete: (item: Item) => void;
 }
 
-function ItemList({ items, currency, onItemSelect }: AllocateItemsProps) {
+function ItemList({ items, currency, onItemSelect, onItemDelete }: AllocateItemsProps) {
     return (
         <>
             <TableContainer component={Paper}>
@@ -35,7 +36,7 @@ function ItemList({ items, currency, onItemSelect }: AllocateItemsProps) {
                                     </IconButton>
                                 </TableCell>
                                 <TableCell>
-                                    <IconButton>
+                                    <IconButton onClick={() => onItemDelete(item)}>
                                         <DeleteIcon fontSize="medium" />
                                     </IconButton>
                                 </TableCell>
