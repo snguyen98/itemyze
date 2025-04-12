@@ -1,27 +1,39 @@
-import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-import Typography from '@mui/material/Typography'
-import Paper from '@mui/material/Paper'
-import Accordion from '@mui/material/Accordion'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import AccordionDetails from '@mui/material/AccordionDetails'
-import Avatar from '@mui/material/Avatar'
-import Stack from '@mui/material/Stack'
-import Backdrop from '@mui/material/Backdrop'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
+import DoneIcon from '@mui/icons-material/Done'
+import DoneAllIcon from '@mui/icons-material/DoneAll'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import RestartAltIcon from '@mui/icons-material/RestartAlt'
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import Autocomplete from '@mui/material/Autocomplete'
+import Avatar from '@mui/material/Avatar'
+import Backdrop from '@mui/material/Backdrop'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import SpeedDial from '@mui/material/SpeedDial'
+import SpeedDialAction from '@mui/material/SpeedDialAction'
+import SpeedDialIcon from '@mui/material/SpeedDialIcon'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 
+import AllocationList from '../../components/AllocationList'
+import Allocation from '../../interfaces/Allocation'
 import Item from '../../interfaces/Item'
 import User from '../../interfaces/User'
-import Allocation from '../../interfaces/Allocation'
-import AllocationList from '../../components/AllocationList'
 
-import { saveAllocations } from '../../services/allocationService'
-import Dict from '../../interfaces/Dict'
 import Button from '@mui/material/Button'
+import Dict from '../../interfaces/Dict'
+import { saveAllocations } from '../../services/allocationService'
 
+import AllocateItemList from '../../components/AllocateItemList'
 import '../../styles/AllocateItems.scss'
 
 interface AllocateItemsProps {
@@ -51,19 +63,106 @@ const AllocateItems = ({
   const [selected, setSelected] = useState<number | false>(false)
   const [showTotals, setShowTotals] = useState<boolean>(false)
 
-  useEffect(() => {
-    const initChecked = items.reduce(
+  const [openDial, setOpenDial] = useState<boolean>(false)
+  const handleOpenDial = () => setOpenDial(true)
+  const handleCloseDial = () => setOpenDial(false)
+
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false)
+
+  const handleDialogClose = () => {
+    setDialogOpen(false)
+  }
+
+  const setAllChecked = (val: boolean) => {
+    const newChecked = items.reduce(
       (itemArr, item) => ({
         ...itemArr,
         [item.id]: users.reduce(
-          (userArr, user) => ({ ...userArr, [user.id]: false }),
+          (userArr, user) => ({ ...userArr, [user.id]: val }),
           {}
         ),
       }),
       {}
     )
 
-    setChecked(initChecked)
+    setChecked(newChecked)
+  }
+
+  const toggleSelect = (itemId: number, userId: number) => {
+    const newVal = !checked[itemId][userId]
+    setChecked((prevState) => {
+      const newState = { ...prevState }
+      newState[itemId][userId] = newVal
+      return newState
+    })
+  }
+
+  const calcRemaining = () => {
+    if (total !== undefined) {
+      const userTotals: number = Object.values(totals).reduce(
+        (acc, val) => acc + val,
+        0
+      )
+      return (total * 100 - userTotals) / 100
+    }
+  }
+
+  const panelClicked =
+    (panel: number) => (_: React.SyntheticEvent, newExpanded: boolean) => {
+      setSelected(newExpanded ? panel : false)
+    }
+
+  const showTotalPanel = () => {
+    setShowTotals(true)
+  }
+
+  const hideTotalPanel = () => {
+    setShowTotals(false)
+  }
+
+  const saveItemisation = async () => {
+    if (calcRemaining() == 0) {
+      const allocations = users.map((user) => ({
+        user: String(user.id),
+        amount: (totals[user.id] / 100).toFixed(2),
+      })) as Dict[]
+
+      await saveAllocations(expenseId, allocations)
+        .then(() => onSave())
+        .catch(() =>
+          handleErr('An error occurred when saving. Please try again.')
+        )
+    } else {
+      handleErr('Please itemise the remaining items')
+    }
+  }
+
+  const onReset = () => {
+    setAllChecked(false)
+    handleCloseDial()
+  }
+
+  const onAllocateAll = () => {
+    setAllChecked(true)
+    handleCloseDial()
+  }
+
+  const onAllocateMultiple = () => {
+    setDialogOpen(true)
+  }
+
+  const allocateActions = [
+    { icon: <RestartAltIcon />, name: 'Reset', clickAction: onReset },
+    {
+      icon: <DoneIcon />,
+      name: 'Allocate Multiple',
+      clickAction: onAllocateMultiple,
+    },
+    { icon: <DoneAllIcon />, name: 'Allocate All', clickAction: onAllocateAll },
+  ]
+
+  useEffect(() => {
+    setAllChecked(false)
   }, [users, items])
 
   useEffect(() => {
@@ -119,55 +218,6 @@ const AllocateItems = ({
       items.reduce((acc, item) => acc + item.cost * 100, 0) / 100
     setTotal(totalCalc)
   }, [items])
-
-  const toggleSelect = (itemId: number, userId: number) => {
-    const newVal = !checked[itemId][userId]
-    setChecked((prevState) => {
-      const newState = { ...prevState }
-      newState[itemId][userId] = newVal
-      return newState
-    })
-  }
-
-  const calcRemaining = () => {
-    if (total !== undefined) {
-      const userTotals: number = Object.values(totals).reduce(
-        (acc, val) => acc + val,
-        0
-      )
-      return (total * 100 - userTotals) / 100
-    }
-  }
-
-  const panelClicked =
-    (panel: number) => (_: React.SyntheticEvent, newExpanded: boolean) => {
-      setSelected(newExpanded ? panel : false)
-    }
-
-  const showTotalPanel = () => {
-    setShowTotals(true)
-  }
-
-  const hideTotalPanel = () => {
-    setShowTotals(false)
-  }
-
-  const saveItemisation = async () => {
-    if (calcRemaining() == 0) {
-      const allocations = users.map((user) => ({
-        user: String(user.id),
-        amount: (totals[user.id] / 100).toFixed(2),
-      })) as Dict[]
-
-      await saveAllocations(expenseId, allocations)
-        .then(() => onSave())
-        .catch(() =>
-          handleErr('An error occurred when saving. Please try again.')
-        )
-    } else {
-      handleErr('Please itemise the remaining items')
-    }
-  }
 
   return (
     <>
@@ -256,6 +306,51 @@ const AllocateItems = ({
           </Stack>
         </Paper>
       </Backdrop>
+
+      <Dialog
+        id="allocate-dialog"
+        open={dialogOpen}
+        onClose={handleDialogClose}
+      >
+        <DialogTitle>Allocate Multiple</DialogTitle>
+        <DialogContent>
+          <Autocomplete
+            multiple
+            id="user-autocomplete"
+            options={users}
+            getOptionLabel={(option) => `${option.fname} ${option.lname}`}
+            renderInput={(params) => (
+              <TextField {...params} variant="standard" label="Allocate To" />
+            )}
+          />
+
+          <AllocateItemList items={items} currency={currencyUnit} />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button>Allocate</Button>
+        </DialogActions>
+      </Dialog>
+
+      <SpeedDial
+        id="allocate-dial"
+        ariaLabel="SpeedDial tooltip example"
+        icon={<SpeedDialIcon icon={<DoneAllIcon />} openIcon={<CloseIcon />} />}
+        onClose={handleCloseDial}
+        onOpen={handleOpenDial}
+        open={openDial}
+      >
+        {allocateActions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+            tooltipOpen
+            onClick={action.clickAction}
+          />
+        ))}
+      </SpeedDial>
     </>
   )
 }
