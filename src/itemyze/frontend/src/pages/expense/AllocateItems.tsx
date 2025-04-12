@@ -69,8 +69,24 @@ const AllocateItems = ({
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
 
+  const [checkedMultiItems, setCheckedMultiItems] = useState<number[]>([])
+  const [selectedMultiUsers, setSelectedMultiUsers] = useState<User[]>([])
+
   const handleDialogClose = () => {
     setDialogOpen(false)
+  }
+
+  const handleMultiToggle = (value: number) => () => {
+    const currentIndex = checkedMultiItems.indexOf(value)
+    const newCheckedMultiItems = [...checkedMultiItems]
+
+    if (currentIndex === -1) {
+      newCheckedMultiItems.push(value)
+    } else {
+      newCheckedMultiItems.splice(currentIndex, 1)
+    }
+
+    setCheckedMultiItems(newCheckedMultiItems)
   }
 
   const setAllChecked = (val: boolean) => {
@@ -149,6 +165,30 @@ const AllocateItems = ({
 
   const onAllocateMultiple = () => {
     setDialogOpen(true)
+  }
+
+  const handleAllocateMultiple = () => {
+    const selectedUserIds: number[] = selectedMultiUsers.map((user) => user.id)
+    const newChecked = items.reduce(
+      (itemArr, item) => ({
+        ...itemArr,
+        [item.id]: users.reduce(
+          (userArr, user) => ({
+            ...userArr,
+            [user.id]:
+              selectedUserIds.includes(user.id) &&
+              checkedMultiItems.includes(item.id)
+                ? true
+                : checked[item.id][user.id],
+          }),
+          {}
+        ),
+      }),
+      {}
+    )
+
+    setChecked(newChecked)
+    setCheckedMultiItems([])
   }
 
   const allocateActions = [
@@ -322,14 +362,22 @@ const AllocateItems = ({
             renderInput={(params) => (
               <TextField {...params} variant="standard" label="Allocate To" />
             )}
+            onChange={(_, newValue) => {
+              setSelectedMultiUsers(newValue)
+            }}
           />
 
-          <AllocateItemList items={items} currency={currencyUnit} />
+          <AllocateItemList
+            items={items}
+            currency={currencyUnit}
+            checkedMultiItems={checkedMultiItems}
+            onItemToggle={handleMultiToggle}
+          />
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button>Allocate</Button>
+          <Button onClick={handleDialogClose}>Close</Button>
+          <Button onClick={handleAllocateMultiple}>Allocate</Button>
         </DialogActions>
       </Dialog>
 
