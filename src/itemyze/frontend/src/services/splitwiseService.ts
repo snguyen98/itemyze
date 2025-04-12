@@ -1,16 +1,15 @@
-import { apiClient, fetchCSRFToken } from './clients';
+import { apiClient, fetchCSRFToken } from './clients'
 
 // Upload to Splitwise
 export const uploadSplitwise = async (expenseId: number) => {
-    await fetchCSRFToken();
+  await fetchCSRFToken()
 
-    try {
-        const res = await apiClient.post(`/upload_splitwise/${expenseId}/`);
+  try {
+    const res = await apiClient.post(`/upload_splitwise/${expenseId}/`)
 
-        return res.data;
-
-    } catch (error) {
-        console.error('Upload Splitwise:', error);
-        throw error;
-    }
+    return res.data
+  } catch (error) {
+    console.error('Upload Splitwise:', error)
+    throw error
+  }
 }

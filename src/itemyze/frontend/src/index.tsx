@@ -1,18 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import CssBaseline from '@mui/material/CssBaseline';
+import CssBaseline from '@mui/material/CssBaseline'
 
-import Home from './pages/Home';
-import CreateExpense from './pages/expense/CreateExpense';
-import NotFound from './pages/NotFound';
-import ViewExpense from './pages/expense/ViewExpense';
-import EditExpense from './pages/expense/EditExpense';
-import ItemiseWorkflow from './pages/expense/ItemiseWorkflow';
-import Login from './pages/auth/Login';
-import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './context/AuthContext';
+import Home from './pages/Home'
+import CreateExpense from './pages/expense/CreateExpense'
+import NotFound from './pages/NotFound'
+import ViewExpense from './pages/expense/ViewExpense'
+import EditExpense from './pages/expense/EditExpense'
+import ItemiseWorkflow from './pages/expense/ItemiseWorkflow'
+import Login from './pages/auth/Login'
+import ProtectedRoute from './components/ProtectedRoute'
+import { AuthProvider } from './context/AuthContext'
 
 //import './styles/index.scss';
 
@@ -38,12 +38,10 @@ export default function App() {
   )
 }
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <CssBaseline />
     <App />
   </React.StrictMode>
-);
+)

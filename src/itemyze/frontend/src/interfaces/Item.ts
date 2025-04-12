@@ -1,7 +1,7 @@
 interface Item {
-    id: number,
-    name: string,
-    cost: number
+  id: number
+  name: string
+  cost: number
 }
 
-export default Item;
+export default Item

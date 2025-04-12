@@ -1,5 +1,5 @@
 interface Total {
-    [userId: number]: number
+  [userId: number]: number
 }
 
-export default Total;
+export default Total

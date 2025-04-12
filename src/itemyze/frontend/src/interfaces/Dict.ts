@@ -1,5 +1,5 @@
 interface Dict {
-    [key: string]: string
+  [key: string]: string
 }
 
-export default Dict;
+export default Dict

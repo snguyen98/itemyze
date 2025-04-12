@@ -1,5 +1,5 @@
 interface Allocation {
-    [id: number]: number
+  [id: number]: number
 }
 
-export default Allocation;
+export default Allocation

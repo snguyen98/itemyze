@@ -31,7 +31,8 @@
     "build": "react-scripts build",
     "build-dev": "webpack --mode development --watch",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write \"src/**/*.{js,ts,jsx,tsx,css,json,html}\""
   },
   "eslintConfig": {
     "extends": [
@@ -55,6 +56,7 @@
   "devDependencies": {
     "@types/jquery": "^3.5.30",
     "@types/js-cookie": "^3.0.6",
+    "prettier": "^3.5.3",
     "react-scripts": "5.0.1",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4"

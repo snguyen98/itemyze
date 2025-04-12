@@ -1,7 +1,7 @@
-import Allocation from "./Allocation";
+import Allocation from './Allocation'
 
 interface ItemAllocation {
-    [itemId: number]: Allocation
+  [itemId: number]: Allocation
 }
 
-export default ItemAllocation;
+export default ItemAllocation

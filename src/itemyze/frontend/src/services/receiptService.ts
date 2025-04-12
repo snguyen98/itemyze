@@ -1,21 +1,24 @@
-import { apiClientFormData, fetchCSRFToken } from './clients';
+import { apiClientFormData, fetchCSRFToken } from './clients'
 
 // Send Receipt
-export const sendReceiptData = async(expenseId: Number, file: File, currency: string) => {
-    await fetchCSRFToken();
+export const sendReceiptData = async (
+  expenseId: Number,
+  file: File,
+  currency: string
+) => {
+  await fetchCSRFToken()
 
-    const formData = new FormData(); 
-    formData.append("expenseId", String(expenseId));
-    formData.append("receipt", file);
-    formData.append("currency", currency);
+  const formData = new FormData()
+  formData.append('expenseId', String(expenseId))
+  formData.append('receipt', file)
+  formData.append('currency', currency)
 
-    try {
-        const res = await apiClientFormData.post(`/process_receipt/`, formData);
+  try {
+    const res = await apiClientFormData.post(`/process_receipt/`, formData)
 
-        return res.data;
-
-    } catch (error) {
-        console.error('Receipt processing:', error);
-        throw error;
-    }
+    return res.data
+  } catch (error) {
+    console.error('Receipt processing:', error)
+    throw error
+  }
 }

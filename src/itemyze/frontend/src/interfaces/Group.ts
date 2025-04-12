@@ -1,9 +1,9 @@
-import User from "./User";
+import User from './User'
 
 interface Group {
-    id: number,
-    name: string,
-    members: User[]
+  id: number
+  name: string
+  members: User[]
 }
 
-export default Group;
+export default Group
