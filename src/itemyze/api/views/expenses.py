@@ -1,126 +1,96 @@
-from rest_framework.decorators import api_view
+from rest_framework import generics
+from rest_framework import filters
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
 
 from ..models import Expense, Item
-from ..tools.splitwise import get_sw_groups, get_sw_group, get_sw_currency_unit
 from ..serializers import ExpenseSerializer, ItemSerializer
+from ..tools.splitwise import get_sw_groups, get_sw_group, get_sw_currency_unit
 
-
-@api_view(['GET', 'POST'])
-def expense_list(request, id=None):
+class ExpenseList(generics.ListCreateAPIView):
     """
-    Handles:
-    - GET /expenses → Retrieve a list of all expenses or filter via query params.
-    - GET /expenses/{id} → Retrieve a specific expense.
-    - POST /expenses → Create a new expense.
+    List all expenses or create a new expense.
+    
+    GET: Retrieve all expenses or filter by query params
+    POST: Create a new expense
     """
-    if request.method == 'GET':
-        if id:
-            # Retrieve a specific expense
-            try:
-                expense = Expense.objects.get(id=id)
-            except Expense.DoesNotExist:
-                return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
-            
-            serializer = ExpenseSerializer(expense)
-            response_data = serializer.data
-
-            group = get_sw_group(expense.splitwise_group)
-            response_data["splitwise_group_name"] = group["name"]
-            response_data["currency_unit"] = get_sw_currency_unit(response_data["currency"])
-
-            return Response(response_data)
-
-        # Retrieve all expenses or filter by query parameters
-        expenses = Expense.objects.all()
-        serializer = ExpenseSerializer(expenses, many=True)
+    serializer_class = ExpenseSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Expense.objects.all()
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
         response_data = serializer.data
-
-        group_names = { group["id"]: group["name"] for group in get_sw_groups()}
         
+        # Add Splitwise group names
+        group_names = {group["id"]: group["name"] for group in get_sw_groups()}
         for expense in response_data:
             expense["splitwise_group_name"] = group_names[expense["splitwise_group"]]
+            
+        return Response(response_data)
+    
+    def perform_create(self, serializer):
+        serializer.save()
 
-        return Response(serializer.data)
 
-    elif request.method == 'POST':
-        if id:
-            # Update an existing expense
-            try:
-                expense = Expense.objects.get(id=id)
-            except Expense.DoesNotExist:
-                return Response({"error": "Expense not found."}, status=status.HTTP_404_NOT_FOUND)
-
-            serializer = ExpenseSerializer(expense, data=request.data, partial=True)  # Allows partial updates
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ExpenseDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update or delete an expense.
+    
+    GET: Retrieve a specific expense
+    PUT/PATCH: Update an expense
+    DELETE: Delete an expense
+    """
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        response_data = serializer.data
         
-        else:
-            # Create a new expense
-            serializer = ExpenseSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Add additional Splitwise data
+        group = get_sw_group(instance.splitwise_group)
+        response_data["splitwise_group_name"] = group["name"]
+        response_data["currency_unit"] = get_sw_currency_unit(response_data["currency"])
+        
+        return Response(response_data)
 
 
-@api_view(['GET', 'POST'])
-def item_list(request, id=None):
+class ItemList(generics.ListCreateAPIView):
     """
-    Handles:
-    - GET /items → Retrieve a list of all items or filter via query params.
-    - GET /item/{id} → Retrieve a specific item.
-    - POST /items → Create a new item.
+    List all items or create a new item.
+    
+    GET: Retrieve all items or filter by query params
+    POST: Create a new item
     """
-    if request.method == 'GET':
-        if id:
-            # Retrieve a specific item
-            try:
-                item = Item.objects.get(id=id)
-            except Item.DoesNotExist:
-                return Response({"error": "Item not found."}, status=status.HTTP_404_NOT_FOUND)
-            
-            serializer = ItemSerializer(item)
-            response_data = serializer.data
-
-            return Response(response_data)
-
-        expense_id = request.GET.get("expenseId")
-
+    serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']
+    
+    def get_queryset(self):
+        queryset = Item.objects.all()
+        expense_id = self.request.query_params.get('expenseId')
         if expense_id:
-            # Retrieve items associated with Expense ID
-            items = Item.objects.filter(expense_id=expense_id)
-        else:
-            # Retrieve all items
-            items = Item.objects.all()
+            queryset = queryset.filter(expense_id=expense_id)
+        return queryset
+    
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
 
-        serializer = ItemSerializer(items, many=True)
-
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-        if id:
-            # Update an existing item
-            try:
-                item = Item.objects.get(id=id)
-            except Item.DoesNotExist:
-                return Response({"error": "Item not found."}, status=status.HTTP_404_NOT_FOUND)
-
-            serializer = ItemSerializer(item, data=request.data, partial=True)  # Allows partial updates
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        else:
-            # Create a new item
-            serializer = ItemSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update or delete an item.
+    
+    GET: Retrieve a specific item
+    PUT/PATCH: Update an item
+    DELETE: Delete an item
+    """
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticated]

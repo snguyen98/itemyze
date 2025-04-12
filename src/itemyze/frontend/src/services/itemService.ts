@@ -23,10 +23,25 @@ export const editItem = async (item: Item): Promise<Item> => {
     await fetchCSRFToken();
 
     try {
-        const res = await apiClient.post(`/items/${item.id}/`, { 
+        const res = await apiClient.put(`/items/${item.id}/`, { 
             name: item.name,
             cost: String(item.cost)
         });
+
+        return res.data;
+
+    } catch (error) {
+        console.error('Item edit:', error);
+        throw error;
+    }
+}
+
+// Delete Item
+export const deleteItem = async (item: Item): Promise<Item> => {
+    await fetchCSRFToken();
+
+    try {
+        const res = await apiClient.delete(`/items/${item.id}/`);
 
         return res.data;
 

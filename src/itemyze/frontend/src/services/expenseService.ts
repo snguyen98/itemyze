@@ -27,7 +27,7 @@ export const editExpense = async (expenseId: number, name: string, group: number
     await fetchCSRFToken();
 
     try {
-        const res = await apiClient.post(`/expenses/${expenseId}/`, { 
+        const res = await apiClient.put(`/expenses/${expenseId}/`, { 
             name,
             splitwise_group: group,
             splitwise_paid_by: user,
