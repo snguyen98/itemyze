@@ -10,7 +10,8 @@ from os import path, remove
 from ..models import Expense, Item
 from ..tools.tesseract import apply_ocr
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 def process_receipt(request):
     expense_id = request.POST.get("expenseId")
     currency = request.POST.get("currency")
@@ -29,14 +30,20 @@ def process_receipt(request):
         items_to_delete = Item.objects.filter(expense=expense)
         items_to_delete.delete()
 
-        items_to_create = [Item(name=item["name"], cost=item["cost"], expense=expense) for item in items]
+        items_to_create = [
+            Item(name=item["name"], cost=item["cost"], expense=expense)
+            for item in items
+        ]
         Item.objects.bulk_create(items_to_create)
 
     except Exception as err:
         # TODO: Add logging for this error
         expense.receipt_status = Expense.ReceiptStatus.ERROR
         expense.save()
-        return Response({"error": "There was an error processing the receipt."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {"error": "There was an error processing the receipt."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
     finally:
         # Cleanup files regardless of success or fail
@@ -48,4 +55,7 @@ def process_receipt(request):
     expense.receipt_status = Expense.ReceiptStatus.PROCESSED
     expense.save()
 
-    return Response({"message": f"Receipt data added to expense with ID {expense_id}"}, status=status.HTTP_200_OK)
+    return Response(
+        {"message": f"Receipt data added to expense with ID {expense_id}"},
+        status=status.HTTP_200_OK,
+    )

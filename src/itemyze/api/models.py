@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 # Create your models here.
 class Expense(models.Model):
     class ReceiptStatus(models.IntegerChoices):
@@ -32,7 +33,7 @@ class Expense(models.Model):
     splitwise_paid_by = models.IntegerField(null=False)
     created_on = models.DateField(auto_now_add=True)
     last_modified = models.DateField(auto_now=True)
-    #created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    # created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 
 class Item(models.Model):
@@ -47,10 +48,12 @@ class Item(models.Model):
 
         if self.cost > total:
             from django.core.exceptions import ValidationError
+
             msg = "Item cost cannot be greater than total cost"
 
             raise ValidationError(msg)
-        
+
+
 class Allocation(models.Model):
     splitwise_user = models.IntegerField()
     amount = models.DecimalField(max_digits=11, decimal_places=2, null=True)
@@ -63,6 +66,7 @@ class Allocation(models.Model):
 
         if expense_total is not None and self.amount > expense_total:
             from django.core.exceptions import ValidationError
+
             msg = "Allocation amount cannot be greater than expense total"
 
             raise ValidationError(msg)
@@ -70,7 +74,7 @@ class Allocation(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['splitwise_user', 'expense'],
-                name='user_expense_unique',
+                fields=["splitwise_user", "expense"],
+                name="user_expense_unique",
             )
         ]
