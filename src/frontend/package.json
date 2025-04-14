@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-django": "cd .. && python manage.py runserver --settings=itemyze.settings.dev",
+    "start-django": "cd ../backend/itemyze && python manage.py runserver --settings=itemyze.settings.dev",
     "build": "react-scripts build",
     "build-dev": "webpack --mode development --watch",
     "test": "react-scripts test",
