@@ -1,35 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar'
 import Stack from '@mui/material/Stack'
-import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import StepButton from '@mui/material/StepButton'
 import StepContent from '@mui/material/StepContent'
-import Button from '@mui/material/Button'
-import Paper from '@mui/material/Paper'
+import Stepper from '@mui/material/Stepper'
 import Typography from '@mui/material/Typography'
-import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 
-import UploadReceipt from '../../components/UploadReceipt'
 import ItemOverlay from '../../components/ItemOverlay'
-import ViewItems from './ViewItems'
-import AllocateItems from './AllocateItems'
+import UploadReceipt from '../../components/UploadReceipt'
 import NotFound from '../NotFound'
+import AllocateItems from './AllocateItems'
+import ViewItems from './ViewItems'
 
-import { getExpense } from '../../services/expenseService'
-import { getItems } from '../../services/itemService'
 import { getAllocations } from '../../services/allocationService'
-import { sendReceiptData } from '../../services/receiptService'
+import { getExpense } from '../../services/expenseService'
 import { getGroupMembers } from '../../services/groupService'
+import { getItems } from '../../services/itemService'
+import { sendReceiptData } from '../../services/receiptService'
 import { uploadSplitwise } from '../../services/splitwiseService'
 
+import Allocation from '../../interfaces/Allocation'
 import Expense from '../../interfaces/Expense'
 import Item from '../../interfaces/Item'
-import Allocation from '../../interfaces/Allocation'
 import User from '../../interfaces/User'
 
 import '../../styles/ItemiseWorkflow.scss'
@@ -137,6 +137,11 @@ const ItemiseWorkflow = () => {
   const handleSaveOverlay = () => {
     handleCloseOverlay()
     handleNext()
+  }
+
+  const handleAllocationSave = () => {
+    retrieveAllocations()
+    handleSaveOverlay()
   }
 
   const displayErr = (msg: string) => {
@@ -322,7 +327,7 @@ const ItemiseWorkflow = () => {
               users={users}
               currencyUnit={expense.currency}
               onClose={handleCloseOverlay}
-              onSave={handleSaveOverlay}
+              onSave={handleAllocationSave}
               handleErr={displayErr}
             />
           )
