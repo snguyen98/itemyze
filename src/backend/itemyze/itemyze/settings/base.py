@@ -12,16 +12,16 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-wry=7e45fk&4cmdq5a*mm!&cnwh((^$$pr^txa##bzdbdj$+=6"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Application definition
 
@@ -60,7 +60,7 @@ REST_FRAMEWORK = {
 
 # Configure SimpleJWT settings
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -93,7 +93,7 @@ ROOT_URLCONF = "itemyze.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'static')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -107,17 +107,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "itemyze.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 
 # Password validation
@@ -150,13 +139,19 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = "static/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# API Config
+
+SW_API_KEY = os.environ.get('SW_API_KEY')
+SW_API_SECRET = os.environ.get('SW_API_SECRET')
+SW_TOKEN_URL = os.environ.get('SW_TOKEN_URL')
+
+# Tesseract Config
+
+TESSERACT_PATH = os.environ.get('TESSERACT_PATH')
+TESSERACT_CONF = os.environ.get('TESSERACT_CONF')

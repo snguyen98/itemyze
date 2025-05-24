@@ -1,15 +1,23 @@
+import os
 from .base import *
-from .api import *
 
-DEBUG = True
-CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:8000/",
-    "http://localhost:8000/",
-    "http://127.0.0.1:3000/",
-    "http://localhost:3000/",
-]
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'default-dev-secret-key')
 
-CSRF_COOKIE_SAMESITE = "Lax"
-SESSION_COOKIE_SAMESITE = "Lax"
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
+    }
+}
+
+# CORS settings for development
+CORS_ALLOW_ALL_ORIGINS = True
+
+STATIC_URL = '/static/'

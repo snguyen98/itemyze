@@ -1,0 +1,33 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile.dev
+    volumes:
+      - ./src/backend:/app
+      - ./.env.dev:/app/.env.dev
+      - db_dev:/app/db_data
+    ports:
+      - '8000:8000'
+    env_file:
+      - ./.env.dev
+    command: python manage.py runserver 0.0.0.0:8000
+    working_dir: /app/itemyze
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile.dev
+    volumes:
+      - ./src/frontend:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
+    env_file:
+      - ./.env.dev
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: npm start
+
+volumes:
+  db_dev:
