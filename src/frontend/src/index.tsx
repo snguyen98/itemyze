@@ -1,18 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import CssBaseline from '@mui/material/CssBaseline'
 
-import Home from './pages/Home'
-import CreateExpense from './pages/expense/CreateExpense'
-import NotFound from './pages/NotFound'
-import ViewExpense from './pages/expense/ViewExpense'
-import EditExpense from './pages/expense/EditExpense'
-import ItemiseWorkflow from './pages/expense/ItemiseWorkflow'
-import Login from './pages/auth/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
+import Home from './pages/Home'
+import NotFound from './pages/NotFound'
+import Login from './pages/auth/Login'
+import CreateExpense from './pages/expense/CreateExpense'
+import EditExpense from './pages/expense/EditExpense'
+import ItemiseWorkflow from './pages/expense/ItemiseWorkflow'
+import ViewExpense from './pages/expense/ViewExpense'
 
 //import './styles/index.scss';
 

@@ -1,5 +1,5 @@
-import { authClient, fetchCSRFToken } from './clients'
 import { refreshInProgress } from '../context/AuthContext'
+import { authClient, fetchCSRFToken } from './clients'
 
 // Add auth-specific interceptor
 authClient.interceptors.response.use(
@@ -10,7 +10,7 @@ authClient.interceptors.response.use(
     // If error is 401 and we haven't already tried to refresh
     // AND the request is not to auth endpoints
     if (
-      error.res?.status === 401 &&
+      error.response.status === 401 &&
       !originalRequest._retry &&
       !refreshInProgress.current &&
       !originalRequest.url.includes('/login/') &&
@@ -18,7 +18,6 @@ authClient.interceptors.response.use(
     ) {
       originalRequest._retry = true
       refreshInProgress.current = true
-
       try {
         // Refresh the token
         await refreshToken()

@@ -1,5 +1,4 @@
 import * as changeCase from 'change-case'
-import Dict from '../interfaces/Dict'
 
 export const camelise = <T>(data: Record<string, any>): T => {
   return Object.keys(data).reduce((acc: Record<string, any>, key: string) => {
