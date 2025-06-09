@@ -10,6 +10,9 @@ from os import path, remove
 from ..models import Expense, Item
 from ..tools.tesseract import apply_ocr
 
+import logging
+
+logger = logging.getLogger("itemyze")
 
 @api_view(["POST"])
 def process_receipt(request):
@@ -37,7 +40,7 @@ def process_receipt(request):
         Item.objects.bulk_create(items_to_create)
 
     except Exception as err:
-        # TODO: Add logging for this error
+        logging.error(f"Failed to process receipt for expense {expense_id}: {err}")
         expense.receipt_status = Expense.ReceiptStatus.ERROR
         expense.save()
         return Response(
