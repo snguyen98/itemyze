@@ -1,0 +1,27 @@
+#item-list {
+    padding: 0.5% 1%;
+    overflow-y: auto;
+}
+
+#header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.frame-content {
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#header-action {
+    position: absolute;
+    right: 0;
+}
+
+#header-return {
+    position: absolute;
+    left: 0;
+}

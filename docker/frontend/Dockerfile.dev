@@ -1,0 +1,15 @@
+FROM node:23-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY src/frontend/package.json src/frontend/package-lock.json* ./
+RUN npm install
+
+# The actual code will be mounted as a volume in docker-compose
+
+# Expose port
+EXPOSE 3000
+
+# Set environment for React development server to accept connections from any host
+ENV HOST=0.0.0.0

@@ -2,8 +2,7 @@
 node_modules/
 
 # Django settings
-src/itemyze/itemyze/settings/api.py
-src/itemyze/itemyze/settings/prod.py
+src/backend/itemyze/itemyze/settings/api.py
 
 # Django migrations
 migrations
@@ -104,6 +103,10 @@ target/
 # IPython
 profile_default/
 ipython_config.py
+
+# Env file
+.env.dev
+.env.prod
 
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is

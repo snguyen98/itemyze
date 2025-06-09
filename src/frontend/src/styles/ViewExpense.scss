@@ -1,0 +1,31 @@
+#header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.frame-content {
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#header-action {
+    position: absolute;
+    right: 0;
+}
+
+#header-return {
+    position: absolute;
+    left: 0;
+}
+
+.view-item {
+    margin-top: 10px !important;
+}
+
+#view-content {
+    width: 80%;
+    margin: auto;
+}

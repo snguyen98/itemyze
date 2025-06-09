@@ -1,0 +1,21 @@
+#expense-table {
+    max-height: 100vh;
+}
+
+#create-icon {
+    z-index: 5;
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+}
+
+#header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    height: 30px;
+}
+
+.frame-content {
+    text-align: center;
+}
