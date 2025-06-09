@@ -156,3 +156,93 @@ SW_TOKEN_URL = os.environ.get('SW_TOKEN_URL')
 
 TESSERACT_PATH = os.environ.get('TESSERACT_PATH')
 TESSERACT_CONF = os.environ.get('TESSERACT_CONF')
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'default-dev-secret-key')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+
+# Log directory
+
+LOG_DIR = os.environ.get('LOG_DIR', BASE_DIR / 'logs')
+Path(LOG_DIR).mkdir(exist_ok=True)
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s    %(levelname)-8s    %(name)-25s    %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file_general': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'django.log'),
+            'maxBytes': 10 * 1024 * 1024,  # 10MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'django_errors.log'),
+            'maxBytes': 10 * 1024 * 1024,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'security_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'security.log'),
+            'maxBytes': 10 * 1024 * 1024,
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        # Root logger
+        '': {
+            'handlers': ['console', 'file_general'],
+            'level': 'INFO',
+        },
+        # Django framework
+        'django': {
+            'handlers': ['console', 'file_general', 'file_errors'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Security events
+        'django.security': {
+            'handlers': ['security_file', 'file_errors'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Your application
+        'itemyze': {
+            'handlers': ['console', 'file_general'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        # Database queries (development only)
+        'django.db.backends': {
+            'handlers': ['console'] if DEBUG else [],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
