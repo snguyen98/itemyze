@@ -18,7 +18,7 @@ def apply_ocr(img_path: str, currency: str) -> tuple[list, float]:
 
 
 def split_item_cost(lines: list, currency: str) -> tuple[list, float]:
-    pattern = f"(\d*,?)*\.?\d*{currency}(\d*,?)*\.?\d*(?!.*(\d*,?)*\.?\d*{currency}(\d*,?)*\.?\d*)"
+    pattern = rf"(\d*,?)*\.?\d*{currency}(\d*,?)*\.?\d*(?!.*(\d*,?)*\.?\d*{currency}(\d*,?)*\.?\d*)"
 
     items = []
     total = None
