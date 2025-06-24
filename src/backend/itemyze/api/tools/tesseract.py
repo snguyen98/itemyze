@@ -1,5 +1,4 @@
-from pathlib import Path
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image
 from pillow_heif import register_heif_opener
 from decimal import Decimal
 from django.conf import settings
@@ -120,30 +119,6 @@ def enhance_for_ocr(img):
     
     # Convert back to PIL RGB
     return Image.fromarray(cv2.cvtColor(denoised, cv2.COLOR_GRAY2RGB))
-    """
-    Apply OCR-specific enhancements to improve text recognition.
-    """
-    # Convert PIL to OpenCV format for advanced processing
-    cv_img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
-    
-    # Convert to grayscale
-    gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
-    
-    # Apply noise reduction
-    denoised = cv2.fastNlMeansDenoising(gray)
-    
-    # Enhance contrast using CLAHE (Contrast Limited Adaptive Histogram Equalization)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-    enhanced = clahe.apply(denoised)
-    
-    # Apply sharpening
-    kernel = np.array([[-1,-1,-1],
-                      [-1, 9,-1],
-                      [-1,-1,-1]])
-    sharpened = cv2.filter2D(enhanced, -1, kernel)
-    
-    # Convert back to PIL
-    return Image.fromarray(sharpened)
 
 def process_image(image_path, preprocess=True):
     """
