@@ -1,4 +1,6 @@
-from PIL import Image
+from pathlib import Path
+from PIL import Image, ImageEnhance, ImageFilter
+from pillow_heif import register_heif_opener
 from decimal import Decimal
 from django.conf import settings
 
@@ -6,6 +8,10 @@ import re
 import pytesseract as pt
 import cv2
 import numpy as np
+
+# Register HEIC support
+register_heif_opener()
+
 
 def apply_ocr(img_path: str, currency: str) -> tuple[list, float]:
     res = process_image(image_path=img_path)
@@ -45,7 +51,7 @@ def clean_items(items, total) -> list:
 
     return items
 
-def standardize_image(image_path, output_path=None, enhance=False):
+def standardize_image(image_path, output_path=None, enhance=True):
     """
     Standardize an image for better Tesseract OCR results.
     
@@ -58,7 +64,7 @@ def standardize_image(image_path, output_path=None, enhance=False):
         PIL.Image: Standardized image object
     """
     try:
-        # Open image with PIL (handles most formats including HEIC from iPhones)
+        # Open image with PIL (handles most formats including HEIC)
         img = Image.open(image_path)
         
         # Convert to RGB if needed (removes alpha channel, handles CMYK, etc.)
@@ -67,19 +73,18 @@ def standardize_image(image_path, output_path=None, enhance=False):
         
         # Handle EXIF rotation (important for mobile photos)
         try:
-            from PIL.ExifTags import ORIENTATION
-            exif = img._getexif()
-            if exif is not None:
-                for tag, value in exif.items():
-                    if tag == ORIENTATION:
-                        if value == 3:
-                            img = img.rotate(180, expand=True)
-                        elif value == 6:
-                            img = img.rotate(270, expand=True)
-                        elif value == 8:
-                            img = img.rotate(90, expand=True)
-        except:
-            pass  # If EXIF handling fails, continue without rotation
+            # Use the newer getexif() method for better compatibility
+            exif = img.getexif()
+            if exif is not None and 274 in exif:  # 274 is the orientation tag
+                orientation = exif[274]
+                if orientation == 3:
+                    img = img.rotate(180, expand=True)
+                elif orientation == 6:
+                    img = img.rotate(270, expand=True)
+                elif orientation == 8:
+                    img = img.rotate(90, expand=True)
+        except Exception as e:
+            print(f"Warning: Could not process EXIF data: {e}")
         
         if enhance:
             img = enhance_for_ocr(img)
@@ -95,6 +100,26 @@ def standardize_image(image_path, output_path=None, enhance=False):
         return None
 
 def enhance_for_ocr(img):
+    """
+    Apply minimal OCR-specific enhancements to improve text recognition.
+    Less aggressive approach to avoid over-processing.
+    """
+    # Convert PIL to OpenCV format
+    cv_img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+    
+    # Convert to grayscale
+    gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
+    
+    # Only apply light denoising if image is very noisy
+    # Check if denoising is needed by measuring noise level
+    laplacian_var = cv2.Laplacian(gray, cv2.CV_64F).var()
+    if laplacian_var < 100:  # Image is blurry/noisy
+        denoised = cv2.fastNlMeansDenoising(gray, h=10)  # Lighter denoising
+    else:
+        denoised = gray
+    
+    # Convert back to PIL RGB
+    return Image.fromarray(cv2.cvtColor(denoised, cv2.COLOR_GRAY2RGB))
     """
     Apply OCR-specific enhancements to improve text recognition.
     """
