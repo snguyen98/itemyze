@@ -307,9 +307,10 @@ const ItemiseWorkflow = () => {
           expense.currencyUnit &&
           items && (
             <ViewItems
+              expenseId={expenseId}
               items={items}
               currencyUnit={expense.currencyUnit}
-              handleEditCompletion={retrieveItems}
+              handleSaveCompletion={retrieveItems}
               onClose={handleCloseOverlay}
               onSave={handleSaveOverlay}
               handleErr={displayErr}

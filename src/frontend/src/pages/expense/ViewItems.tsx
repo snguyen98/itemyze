@@ -12,23 +12,25 @@ import Typography from '@mui/material/Typography'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import ItemList from '../../components/ItemList'
 import Item from '../../interfaces/Item'
-import { deleteItem, editItem } from '../../services/itemService'
 
+import { updateItems } from '../../services/itemService'
 import '../../styles/ViewItems.scss'
 
 interface ViewItemsProps {
+  expenseId: number
   items: Item[]
   currencyUnit: string
-  handleEditCompletion: () => void
+  handleSaveCompletion: () => void
   onClose: () => void
   onSave: () => void
   handleErr: (msg: string) => void
 }
 
 const ViewItems = ({
+  expenseId,
   items,
   currencyUnit,
-  handleEditCompletion,
+  handleSaveCompletion,
   onClose,
   onSave,
   handleErr,
@@ -40,6 +42,8 @@ const ViewItems = ({
     open: false,
     itemId: null,
   })
+
+  const [currItems, setCurrItems] = useState<Item[]>(items)
 
   const [loadingOpen, setLoadingOpen] = useState<boolean>(true)
 
@@ -54,6 +58,18 @@ const ViewItems = ({
   const nameValue = watch('name')
   const costValue = watch('cost')
 
+  // Update an item
+  const updateItem = (id: number, updates: Partial<Item>) => {
+    setCurrItems((currItems) =>
+      currItems.map((item) => (item.id === id ? { ...item, ...updates } : item))
+    )
+  }
+
+  // Delete an item
+  const deleteItem = (id: number) => {
+    setCurrItems((currItems) => currItems.filter((item) => item.id !== id))
+  }
+
   const handleItemSelect = (item: Item) => {
     if (item !== undefined) {
       setDialogState({
@@ -67,14 +83,7 @@ const ViewItems = ({
 
   const handleItemDelete = async (item: Item) => {
     if (item !== undefined) {
-      await deleteItem(item)
-        .then(async () => {
-          handleEditCompletion()
-        })
-        .catch(() => {
-          handleErr('Could not delete item. Please try again.')
-          setLoadingOpen(false)
-        })
+      deleteItem(item.id)
     }
   }
 
@@ -83,6 +92,17 @@ const ViewItems = ({
       open: false,
       itemId: null,
     })
+  }
+
+  const saveItems = async () => {
+    await updateItems(expenseId, currItems)
+      .then(() => {
+        handleSaveCompletion()
+        onSave()
+      })
+      .catch(() =>
+        handleErr('An error occurred when saving. Please try again.')
+      )
   }
 
   type Inputs = {
@@ -97,21 +117,11 @@ const ViewItems = ({
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     if (dialogState.itemId) {
-      const item: Item = {
-        id: dialogState.itemId,
+      handleDialogClose()
+      updateItem(dialogState.itemId, {
         name: data.name,
         cost: Number(data.cost),
-      }
-      handleDialogClose()
-      setLoadingOpen(true)
-      await editItem(item)
-        .then(async () => {
-          handleEditCompletion()
-        })
-        .catch(() => {
-          handleErr('Could not update item. Please try again.')
-          setLoadingOpen(false)
-        })
+      })
     }
   }
 
@@ -122,14 +132,16 @@ const ViewItems = ({
           <IconButton id="header-return" onClick={onClose}>
             <CloseIcon />
           </IconButton>
-          <Button id="header-action" variant="text" onClick={onSave}>
+          <Button id="header-action" variant="text" onClick={saveItems}>
             Save
           </Button>
         </Stack>
       </Stack>
-      {items !== undefined && items.length > 0 && currencyUnit !== undefined ? (
+      {currItems !== undefined &&
+      currItems.length > 0 &&
+      currencyUnit !== undefined ? (
         <ItemList
-          items={items}
+          items={currItems}
           currency={currencyUnit}
           onItemSelect={handleItemSelect}
           onItemDelete={handleItemDelete}

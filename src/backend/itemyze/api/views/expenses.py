@@ -1,7 +1,10 @@
 from rest_framework import generics
 from rest_framework import filters
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.db import transaction
 
 from ..models import Expense, Item
 from ..serializers import ExpenseSerializer, ItemSerializer
@@ -100,3 +103,56 @@ class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     permission_classes = [IsAuthenticated]
+
+
+class ItemBulkUpdate(APIView):
+    """
+    Replace all items tied to a given expenseId with new ones.
+    Used when the user clicks "Save" in the frontend.
+
+    POST: Accepts a list of items (some with `id`s, some new) and syncs the DB accordingly.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        data = request.data
+        expense_id = request.query_params.get("expenseId")
+
+        if not expense_id:
+            return Response({"error": "Missing expenseId"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Filter only items belonging to this expense
+        existing_items = Item.objects.filter(expense_id=expense_id)
+        existing_map = {item.id: item for item in existing_items}
+        incoming_ids = set()
+
+        with transaction.atomic():
+            for item_data in data:
+                item_id = item_data.get("id")
+                incoming_ids.add(item_id)
+
+                if item_id and item_id in existing_map:
+                    # Update if any field changed
+                    item = existing_map[item_id]
+                    serializer = ItemSerializer(item, data=item_data, partial=True)
+                    if serializer.is_valid():
+                        serializer.save()
+                    else:
+                        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    # New item: add expense_id and created_by
+                    item_data["expense_id"] = expense_id
+                    item_data["created_by"] = request.user.id
+                    serializer = ItemSerializer(data=item_data)
+                    if serializer.is_valid():
+                        serializer.save()
+                    else:
+                        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # Delete items that were removed
+            to_delete = [item.id for item in existing_items if item.id not in incoming_ids and item.id is not None]
+            if to_delete:
+                Item.objects.filter(id__in=to_delete).delete()
+
+        return Response({"status": "success"}, status=status.HTTP_200_OK)
