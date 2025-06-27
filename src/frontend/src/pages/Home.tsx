@@ -1,22 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import AddIcon from '@mui/icons-material/Add'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import {
-  Paper,
-  List,
-  ListItemText,
-  ListItemButton,
   Divider,
-  IconButton,
+  List,
+  ListItemButton,
+  ListItemText,
   Typography,
 } from '@mui/material'
 import Fab from '@mui/material/Fab'
-import AddIcon from '@mui/icons-material/Add'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 
-import '../styles/Home.scss'
-import { getExpenses } from '../services/expenseService'
 import Expense from '../interfaces/Expense'
+import { getExpenses } from '../services/expenseService'
+import '../styles/Home.scss'
 
 const Home = () => {
   const navigate = useNavigate()
@@ -27,22 +25,6 @@ const Home = () => {
     getExpenses().then((res) => {
       setExpenses(res)
     })
-    /*
-        setExpenses([
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" },
-            { name: "Test", groupId: "1", currency: "£", total: "5", receiptStatus: "Pending", syncStatus: "Pending" }
-        ])
-        */
   }, [])
 
   const clickItem = (expenseId: number) => {

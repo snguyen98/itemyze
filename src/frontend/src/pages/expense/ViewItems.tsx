@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 
+import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
 import { Backdrop, Button, CircularProgress, Stack } from '@mui/material'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
+import Fab from '@mui/material/Fab'
 import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
@@ -37,13 +39,23 @@ const ViewItems = ({
 }: ViewItemsProps) => {
   const [dialogState, setDialogState] = useState<{
     open: boolean
-    itemId: null | number
+    itemLocalId: string | undefined
+    mode: string
   }>({
     open: false,
-    itemId: null,
+    itemLocalId: '',
+    mode: 'create',
   })
 
-  const [currItems, setCurrItems] = useState<Item[]>(items)
+  // Generate unique temp IDs
+  const generateLocalId = () => `id_${Date.now()}_${Math.random()}`
+
+  const [currItems, setCurrItems] = useState<Item[]>(
+    items.map((item) => ({
+      ...item,
+      localId: generateLocalId(),
+    }))
+  )
 
   const [loadingOpen, setLoadingOpen] = useState<boolean>(true)
 
@@ -58,39 +70,60 @@ const ViewItems = ({
   const nameValue = watch('name')
   const costValue = watch('cost')
 
-  // Update an item
-  const updateItem = (id: number, updates: Partial<Item>) => {
+  const createItem = (newItem: Omit<Item, 'id' | 'tempId'>) => {
+    setCurrItems((currItems) => [
+      ...currItems,
+      { ...newItem, localId: generateLocalId() } as Item,
+    ])
+  }
+
+  const updateItem = (localId: string, updates: Partial<Item>) => {
     setCurrItems((currItems) =>
-      currItems.map((item) => (item.id === id ? { ...item, ...updates } : item))
+      currItems.map((item) =>
+        item.localId === localId ? { ...item, ...updates } : item
+      )
     )
   }
 
-  // Delete an item
-  const deleteItem = (id: number) => {
-    setCurrItems((currItems) => currItems.filter((item) => item.id !== id))
+  const deleteItem = (localId: string) => {
+    setCurrItems((currItems) =>
+      currItems.filter((item) => item.localId !== localId)
+    )
   }
 
   const handleItemSelect = (item: Item) => {
     if (item !== undefined) {
       setDialogState({
         open: true,
-        itemId: item.id,
+        itemLocalId: item.localId,
+        mode: 'edit',
       })
       setValue('name', item.name)
       setValue('cost', String(item.cost))
     }
   }
 
+  const handleClickCreate = () => {
+    setDialogState({
+      open: true,
+      itemLocalId: '',
+      mode: 'create',
+    })
+    setValue('name', '')
+    setValue('cost', '')
+  }
+
   const handleItemDelete = async (item: Item) => {
-    if (item !== undefined) {
-      deleteItem(item.id)
+    if (item !== undefined && item.localId) {
+      deleteItem(item.localId)
     }
   }
 
   const handleDialogClose = () => {
     setDialogState({
       open: false,
-      itemId: null,
+      itemLocalId: '',
+      mode: 'create',
     })
   }
 
@@ -116,13 +149,19 @@ const ViewItems = ({
   }, [items])
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
-    if (dialogState.itemId) {
-      handleDialogClose()
-      updateItem(dialogState.itemId, {
+    if (dialogState.itemLocalId) {
+      updateItem(dialogState.itemLocalId, {
+        name: data.name,
+        cost: Number(data.cost),
+      })
+    } else {
+      createItem({
+        localId: generateLocalId(),
         name: data.name,
         cost: Number(data.cost),
       })
     }
+    handleDialogClose()
   }
 
   return (
@@ -150,7 +189,9 @@ const ViewItems = ({
         <Typography>No items to display</Typography>
       )}
       <Dialog open={dialogState.open} onClose={handleDialogClose}>
-        <DialogTitle>Edit Item</DialogTitle>
+        <DialogTitle>
+          {dialogState.mode === 'edit' ? 'Edit Item' : 'Create Item'}
+        </DialogTitle>
         <DialogContent>
           <Stack>
             <TextField
@@ -183,7 +224,9 @@ const ViewItems = ({
 
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button onClick={handleSubmit(onSubmit)}>Save</Button>
+          <Button onClick={handleSubmit(onSubmit)}>
+            {dialogState.mode === 'edit' ? 'Save' : 'Create'}
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -193,6 +236,9 @@ const ViewItems = ({
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <Fab id="create-icon" color="primary" onClick={handleClickCreate}>
+        <AddIcon />
+      </Fab>
     </div>
   )
 }
