@@ -59,7 +59,7 @@ const ItemiseWorkflow = () => {
     {
       label: 'Upload your receipt',
       descriptions: {
-        required: `Please upload a receipt to process.`,
+        required: `Please upload a receipt to process here or add them manually in the next step.`,
         complete: `Uploading a new receipt will overwrite your existing 
                            items.`,
       },
@@ -67,7 +67,7 @@ const ItemiseWorkflow = () => {
     {
       label: 'View and edit your items',
       descriptions: {
-        required: `Please upload a receipt to process.`,
+        required: `Please upload a receipt to process in the previous step or add them manually here.`,
         complete: `You can edit the names and associated costs.`,
       },
     },
@@ -289,10 +289,12 @@ const ItemiseWorkflow = () => {
   }
 
   const renderSkipButton = (stepNum: number) => {
-    if (stepNum <= 1) {
+    if (stepNum == 0) {
+      return <Button onClick={handleNext}>Continue</Button>
+    } else if (stepNum == 1) {
       return (
         <Button disabled={items.length <= 0} onClick={handleNext}>
-          Skip
+          Continue
         </Button>
       )
     } else if (stepNum == 2) {
