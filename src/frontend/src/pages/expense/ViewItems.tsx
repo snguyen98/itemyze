@@ -22,7 +22,6 @@ interface ViewItemsProps {
   expenseId: number
   items: Item[]
   currencyUnit: string
-  handleSaveCompletion: () => void
   onClose: () => void
   onSave: () => void
   handleErr: (msg: string) => void
@@ -32,7 +31,6 @@ const ViewItems = ({
   expenseId,
   items,
   currencyUnit,
-  handleSaveCompletion,
   onClose,
   onSave,
   handleErr,
@@ -130,7 +128,6 @@ const ViewItems = ({
   const saveItems = async () => {
     await updateItems(expenseId, currItems)
       .then(() => {
-        handleSaveCompletion()
         onSave()
       })
       .catch(() =>

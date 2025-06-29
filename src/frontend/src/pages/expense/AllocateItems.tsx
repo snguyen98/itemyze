@@ -291,7 +291,9 @@ const AllocateItems = ({
                 <Stack className="avatar-display" direction="row">
                   {Object.keys(checked).length !== 0 &&
                     users
-                      .filter((user) => checked[item.id][user.id])
+                      .filter(
+                        (user) => checked[item.id] && checked[item.id][user.id]
+                      )
                       .map((user) => (
                         <Avatar
                           key={user.id}
@@ -303,7 +305,7 @@ const AllocateItems = ({
                 </Stack>
               </AccordionSummary>
               <AccordionDetails>
-                {Object.keys(checked).length !== 0 && (
+                {Object.keys(checked).length !== 0 && checked[item.id] && (
                   <AllocationList
                     item={item}
                     users={users}

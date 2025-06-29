@@ -139,6 +139,11 @@ const ItemiseWorkflow = () => {
     handleNext()
   }
 
+  const handleViewItemsSave = () => {
+    retrieveItems()
+    handleSaveOverlay()
+  }
+
   const handleAllocationSave = () => {
     retrieveAllocations()
     handleSaveOverlay()
@@ -310,9 +315,8 @@ const ItemiseWorkflow = () => {
               expenseId={expenseId}
               items={items}
               currencyUnit={expense.currencyUnit}
-              handleSaveCompletion={retrieveItems}
               onClose={handleCloseOverlay}
-              onSave={handleSaveOverlay}
+              onSave={handleViewItemsSave}
               handleErr={displayErr}
             />
           )
