@@ -38,7 +38,7 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
 
-        fields = ["id", "name", "cost"]
+        fields = ["id", "name", "cost", "expense"]
 
 
 class AllocationSerializer(serializers.ModelSerializer):

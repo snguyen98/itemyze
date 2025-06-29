@@ -46,13 +46,8 @@ prod:
 	@echo "Starting production environment..."
 	@echo "Building..."
 	@$(DC_PROD) build
-	@echo "Starting backend and frontend first..."
+	@echo "Starting backend and frontend..."
 	$(DC_PROD) up -d backend frontend
-	@echo "Waiting for backend to be ready..."
-	@sleep 3
-	@echo "Starting nginx..."
-	$(DC_PROD) up -d nginx
-	@echo "Production environment started."
 
 .PHONY: migrate-prod
 migrate-prod:

@@ -1,6 +1,6 @@
-import { apiClient, fetchCSRFToken } from './clients'
 import Item from '../interfaces/Item'
 import { camelise } from '../utils/camelise'
+import { apiClient, fetchCSRFToken } from './clients'
 
 // Get Items
 export const getItems = async (expenseId: number): Promise<Item[]> => {
@@ -44,6 +44,26 @@ export const deleteItem = async (item: Item): Promise<Item> => {
     return res.data
   } catch (error) {
     console.error('Item delete:', error)
+    throw error
+  }
+}
+
+// Bulk Update Items
+export const updateItems = async (
+  expenseId: number,
+  items: Item[]
+): Promise<Item[]> => {
+  await fetchCSRFToken()
+
+  try {
+    const res = await apiClient.post(
+      `/items/bulk_update/?expenseId=${expenseId}`,
+      items
+    )
+
+    return res.data
+  } catch (error) {
+    console.error('Item bulk update:', error)
     throw error
   }
 }

@@ -1,5 +1,5 @@
 from .expenses import ExpenseList, ExpenseDetail
-from .expenses import ItemList, ItemDetail
+from .expenses import ItemList, ItemDetail, ItemBulkUpdate
 from .groups import get_groups, get_group_members
 from .allocations import allocation_list
 from .receipt import process_receipt
