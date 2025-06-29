@@ -9,12 +9,14 @@ import {
 } from 'react-hook-form'
 
 import {
+  Autocomplete,
   Button,
   FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
   Select,
+  TextField,
 } from '@mui/material'
 import Input from '@mui/material/Input'
 import axios from 'axios'
@@ -152,30 +154,44 @@ function ExpenseForm<T extends FieldValues>({
         )}
       </FormControl>
 
-      <FormControl fullWidth className="form-item" error={!!errors.currency}>
-        <InputLabel required id="currency-select-label">
-          Currency
-        </InputLabel>
-        <Select
-          labelId="currency-select-label"
-          {...register('currency' as Path<T>, {
-            required: 'Currency is required',
-          })}
-          value={watch('currency' as Path<T>) ?? ''}
-        >
-          {currencies.map((currency) => (
-            <MenuItem
-              key={currency.currency_code}
-              value={currency.currency_code}
-            >{`${currency.currency_code} (${currency.unit})`}</MenuItem>
-          ))}
-        </Select>
-        {errors.currency && (
-          <FormHelperText>
-            {String(errors.currency?.message || '')}
-          </FormHelperText>
+      <Autocomplete
+        options={currencies}
+        getOptionLabel={(option) => `${option.currency_code} (${option.unit})`}
+        value={
+          currencies.find(
+            (currency) =>
+              currency.currency_code === watch('currency' as Path<T>)
+          ) || null
+        }
+        onChange={(_, newValue) => {
+          setValue(
+            'currency' as Path<T>,
+            (newValue?.currency_code || '') as PathValue<T, Path<T>>
+          )
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Currency"
+            required
+            error={!!errors.currency}
+            helperText={
+              errors.currency ? String(errors.currency?.message || '') : ''
+            }
+            fullWidth
+            className="form-item"
+          />
         )}
-      </FormControl>
+        isOptionEqualToValue={(option, value) =>
+          option.currency_code === value?.currency_code
+        }
+      />
+      <input
+        type="hidden"
+        {...register('currency' as Path<T>, {
+          required: 'Currency is required',
+        })}
+      />
       <Button
         className="form-item"
         fullWidth

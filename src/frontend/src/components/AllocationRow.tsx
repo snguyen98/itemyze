@@ -14,7 +14,7 @@ function AllocationRow({
 }) {
   return (
     <FormControlLabel
-      control={<Checkbox onChange={onSelect} />}
+      control={<Checkbox onChange={onSelect} checked={isActive} />}
       className={`alloc-row ${isActive ? 'row-selected' : 'row-deselected'}`}
       label={`${user.fname} ${user.lname}`}
     />
