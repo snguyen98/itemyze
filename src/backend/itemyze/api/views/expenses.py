@@ -8,7 +8,7 @@ from django.db import transaction
 
 from ..models import Expense, Item
 from ..serializers import ExpenseSerializer, ItemSerializer
-from ..tools.splitwise import get_sw_groups, get_sw_group, get_sw_currency_unit
+from ..tools.splitwise import get_sw_groups, get_sw_group, get_sw_currency_unit, get_sw_user
 
 
 class ExpenseList(generics.ListCreateAPIView):
@@ -32,9 +32,16 @@ class ExpenseList(generics.ListCreateAPIView):
 
         # Add Splitwise group names
         group_names = {group["id"]: group["name"] for group in get_sw_groups()}
+        filtered_expenses = []
         for expense in response_data:
-            expense["splitwise_group_name"] = group_names[expense["splitwise_group"]]
+            try:
+                expense["splitwise_group_name"] = group_names[expense["splitwise_group"]]
+                filtered_expenses.append(expense)
+            except KeyError:
+                # Skip this expense if splitwise_group is not found in group_names
+                continue
 
+            response_data = filtered_expenses
         return Response(response_data)
 
     def perform_create(self, serializer):
@@ -60,9 +67,18 @@ class ExpenseDetail(generics.RetrieveUpdateDestroyAPIView):
         response_data = serializer.data
 
         # Add additional Splitwise data
-        group = get_sw_group(instance.splitwise_group)
-        response_data["splitwise_group_name"] = group["name"]
-        response_data["currency_unit"] = get_sw_currency_unit(response_data["currency"])
+        try:
+            group = get_sw_group(instance.splitwise_group)
+            response_data["splitwise_group_name"] = group["name"]
+            response_data["currency_unit"] = get_sw_currency_unit(response_data["currency"])
+
+            paid_by = get_sw_user(instance.splitwise_paid_by)
+            first_name = paid_by.get("first_name") or ""
+            last_name = paid_by.get("last_name") or ""
+            response_data["splitwise_paid_by_name"] = f"{first_name} {last_name}".strip()
+            
+        except Exception as err:
+            return Response(err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(response_data)
 

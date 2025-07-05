@@ -1,14 +1,13 @@
-import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-import Expense from '../../interfaces/Expense'
-import { getExpense } from '../../services/expenseService'
-import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
-import { Backdrop, CircularProgress, Stack } from '@mui/material'
-import { Button } from '@mui/material'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import EditIcon from '@mui/icons-material/Edit'
+import { Backdrop, Button, CircularProgress, Stack } from '@mui/material'
+import Divider from '@mui/material/Divider'
+import Typography from '@mui/material/Typography'
+import Expense from '../../interfaces/Expense'
+import { getExpense } from '../../services/expenseService'
 
 import '../../styles/ViewExpense.scss'
 
@@ -86,7 +85,7 @@ const ViewExpense = () => {
             Expense: {expense.splitwiseId}
           </Typography>
           <Typography className="view-item">
-            Paid By: {expense.splitwisePaidBy}
+            Paid By: {expense.splitwisePaidByName}
           </Typography>
           <Typography className="view-item">
             Group: {expense.splitwiseGroupName}

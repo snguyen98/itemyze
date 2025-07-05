@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import AddIcon from '@mui/icons-material/Add'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import {
+  Box,
   Divider,
   List,
   ListItemButton,
@@ -53,16 +54,27 @@ const Home = () => {
           expenses.length > 0 &&
           expenses.map((expense) => (
             <div key={expense.id}>
-              <ListItemButton onClick={() => clickItem(expense.id)}>
-                <ListItemText
-                  primary={expense.name}
-                  secondary={expense.splitwiseGroupName}
-                />
-                <ListItemText primary={expense.currency} />
-                <ListItemText
-                  primary={`Receipt ${expense.receiptStatusLabel}`}
-                />
-                <ListItemText primary={`Sync ${expense.syncStatusLabel}`} />
+              <ListItemButton
+                onClick={() => clickItem(expense.id)}
+                sx={{ display: 'flex', alignItems: 'center', gap: 3 }}
+              >
+                <Box sx={{ flex: 2 }}>
+                  <ListItemText
+                    primary={expense.name}
+                    secondary={expense.splitwiseGroupName}
+                  />
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <ListItemText primary={expense.currency} />
+                </Box>
+                <Box sx={{ flex: 2 }}>
+                  <ListItemText
+                    primary={`Receipt ${expense.receiptStatusLabel}`}
+                  />
+                </Box>
+                <Box sx={{ flex: 2 }}>
+                  <ListItemText primary={`Sync ${expense.syncStatusLabel}`} />
+                </Box>
                 <ChevronRightIcon />
               </ListItemButton>
               <Divider />
