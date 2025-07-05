@@ -1,20 +1,24 @@
 .avatar-display {
-    margin-left: auto;
-    margin-right: 0;
+  margin-left: auto;
+  margin-right: 0;
 }
 
 #footer {
-    position: sticky;
-    bottom: 0;
-    z-index: 5;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
 }
 
 div.avatar-img {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 #allocate-dialog {
-    width: 100%;
+  width: 100%;
+}
+
+.MuiDialogContent-root {
+  padding-bottom: 0 !important;
 }
