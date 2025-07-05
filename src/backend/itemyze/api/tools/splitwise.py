@@ -40,6 +40,15 @@ def get_sw_group(id: int):
     return group
 
 
+def get_sw_user(id: int):
+    session = get_oauth_session()
+
+    res = session.get(f"https://secure.splitwise.com/api/v3.0/get_user/{id}")
+    user = json.loads(res.content)["user"]
+
+    return user
+
+
 def get_sw_currencies():
     session = get_oauth_session()
 

@@ -13,6 +13,7 @@ interface Expense {
   splitwiseGroup: number
   splitwiseGroupName: string
   splitwisePaidBy: number
+  splitwisePaidByName: string
   createdBy?: User
 }
 
